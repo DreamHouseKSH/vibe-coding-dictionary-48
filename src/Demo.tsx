@@ -39,7 +39,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export default function Demo({
   id,
@@ -132,7 +132,11 @@ export default function Demo({
       aria-label="스크롤 체험 영역"
       onScroll={(e) => setValue(e.currentTarget.scrollTop)}
     >
-      <div style={{ height: kind === 18 ? 480 : 640, position: "relative" }}>
+      <div
+        className={
+          kind === 18 ? "scroll-story scroll-story-reveal" : "scroll-story"
+        }
+      >
         {kind === 6 ? (
           <>
             <div className="sticky-bar">상단에 붙어 있는 헤더</div>
@@ -155,17 +159,21 @@ export default function Demo({
           <>
             <div
               className="parallax-back"
-              style={{
-                transform: `translateY(${reduce ? 0 : value * 0.65}px)`,
-              }}
+              style={
+                {
+                  "--parallax-y": `${reduce ? 0 : value * 0.65}px`,
+                } as CSSProperties
+              }
             >
               BACKGROUND · 느리게
             </div>
             <div
               className="parallax-front"
-              style={{
-                transform: `translateY(${reduce ? 0 : value * 0.15}px)`,
-              }}
+              style={
+                {
+                  "--parallax-y": `${reduce ? 0 : value * 0.15}px`,
+                } as CSSProperties
+              }
             >
               FOREGROUND · 빠르게
             </div>
@@ -217,7 +225,10 @@ export default function Demo({
             value={[value || 100]}
             onValueChange={(v) => setValue(v[0])}
           />
-          <div className="resizable-demo" style={{ width: `${value || 100}%` }}>
+          <div
+            className="resizable-demo"
+            style={{ "--demo-width": `${value || 100}%` } as CSSProperties}
+          >
             <div className="responsive-tiles">{tiles(6)}</div>
           </div>
         </>
@@ -457,7 +468,7 @@ export default function Demo({
               <div className="tile">✓ 프로필을 불러왔습니다.</div>
             ) : (
               <>
-                <Skeleton className="size-12 rounded-full" />
+                <Skeleton shape="circle" className="size-12" />
                 <div className="grow">
                   <Skeleton className="h-4 w-3/4 mb-3" />
                   <Skeleton className="h-4 w-1/2" />
@@ -495,7 +506,11 @@ export default function Demo({
               <span
                 key={i}
                 className="tile"
-                style={{ animationDelay: `${reduce ? 0 : i * 0.13}s` }}
+                style={
+                  {
+                    "--demo-delay": `${reduce ? 0 : i * 0.13}s`,
+                  } as CSSProperties
+                }
               >
                 {x}
               </span>
@@ -599,7 +614,7 @@ export default function Demo({
               <span>{e}</span>
               <motion.div
                 className="dot"
-                animate={{ x: on ? 180 : 0 }}
+                animate={{ x: on ? 120 : 0 }}
                 transition={{ duration: reduce ? 0 : 1.5, ease: e }}
               />
             </div>
@@ -655,7 +670,7 @@ export default function Demo({
               <span>{i ? "delay .5s / 1.2s" : "delay 0s / .6s"}</span>
               <motion.div
                 className="dot"
-                animate={{ x: on ? 150 : 0 }}
+                animate={{ x: on ? 90 : 0 }}
                 transition={{
                   delay: reduce ? 0 : delay,
                   duration: reduce ? 0 : i ? 1.2 : 0.6,
@@ -762,20 +777,35 @@ export default function Demo({
         <>
           {action}
           <div className="path-stage">
-            <svg viewBox="0 0 300 120" aria-hidden="true">
+            <svg
+              key={cycle}
+              viewBox="0 0 300 120"
+              role="img"
+              aria-label="곡선을 따라 이동하는 점"
+            >
               <path
                 d="M20 100 Q150 -70 280 100"
                 fill="none"
                 stroke="currentColor"
                 strokeDasharray="4 5"
               />
+              {running && !reduce ? (
+                <circle r="8" fill="currentColor">
+                  <animateMotion
+                    dur="1.3s"
+                    fill="freeze"
+                    path="M20 100 Q150 -70 280 100"
+                  />
+                </circle>
+              ) : (
+                <circle
+                  cx={reduce ? 280 : 20}
+                  cy="100"
+                  r="8"
+                  fill="currentColor"
+                />
+              )}
             </svg>
-            <div
-              key={cycle}
-              className={`path-ball ${running ? "path-playing" : ""}`}
-            >
-              ●
-            </div>
           </div>
         </>
       );
@@ -902,13 +932,15 @@ export default function Demo({
                   rotateX: reduce ? 0 : -pos.y * 25,
                   rotateY: reduce ? 0 : pos.x * 25,
                 }}
-                style={{ transformPerspective: 600 }}
               >
                 <div
                   className="glare"
-                  style={{
-                    background: `radial-gradient(circle at ${50 + pos.x * 100}% ${50 + pos.y * 100}%, #ffffffbb, transparent 65%)`,
-                  }}
+                  style={
+                    {
+                      "--glare-x": `${50 + pos.x * 100}%`,
+                      "--glare-y": `${50 + pos.y * 100}%`,
+                    } as CSSProperties
+                  }
                 />
                 3D TILT ◇
               </motion.div>
@@ -936,14 +968,13 @@ export default function Demo({
                 <span
                   className="confetti-piece"
                   key={i}
-                  style={{
-                    left: `${(i * 37) % 100}%`,
-                    background: ["#18181b", "#a1a1aa", "#d4d4d8", "#4b5563"][
-                      i % 4
-                    ],
-                    animationDelay: `${(i % 6) * 0.05}s`,
-                    transform: `rotate(${i * 27}deg)`,
-                  }}
+                  style={
+                    {
+                      "--confetti-x": `${(i * 37) % 100}%`,
+                      "--demo-delay": `${(i % 6) * 0.05}s`,
+                      "--confetti-rotate": `${i * 27}deg`,
+                    } as CSSProperties
+                  }
                 />
               ))}
           </div>

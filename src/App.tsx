@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState } from "react";
+import { useState } from "react";
 import { MotionConfig } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,13 +19,6 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -35,12 +28,10 @@ import {
   Plus,
   Check,
   Copy,
-  Play,
   Search,
 } from "lucide-react";
-import { terms, type Term } from "./terms";
-const Demo = lazy(() => import("./Demo"));
-import "./App.css";
+import { terms } from "./terms";
+import { InlineDemo } from "./InlineDemo";
 
 const categories = [
   ["all", "전체"],
@@ -52,13 +43,12 @@ const categories = [
   ["ep2-adv", "전환 · 반응"],
 ] as const;
 export default function App() {
-  const origin = useRef<HTMLButtonElement | null>(null);
   const [query, setQuery] = useState(""),
     [category, setCategory] = useState("all"),
     [selected, setSelected] = useState<number[]>([]),
-    [active, setActive] = useState<Term | null>(null),
     [reduce, setReduce] = useState(false),
-    [copyError, setCopyError] = useState(false);
+    [copyError, setCopyError] = useState(false),
+    [copyFailedTerm, setCopyFailedTerm] = useState<number | null>(null);
   const shown = terms.filter(
     (t) =>
       (category === "all" || t.cat === category) &&
@@ -78,13 +68,15 @@ export default function App() {
       s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
     );
   }
-  async function copy(text: string) {
+  async function copy(text: string, termId?: number) {
     try {
       await navigator.clipboard.writeText(text);
       setCopyError(false);
+      setCopyFailedTerm(null);
       toast.success("프롬프트를 복사했습니다.");
     } catch {
       setCopyError(true);
+      setCopyFailedTerm(termId ?? null);
       toast.error("복사할 수 없습니다. 아래 텍스트를 선택해 직접 복사하세요.");
     }
   }
@@ -116,7 +108,7 @@ export default function App() {
                   <Badge variant="secondary">{selected.length}</Badge>
                 </Button>
               </SheetTrigger>
-              <SheetContent className="builder">
+              <SheetContent size="builder">
                 <SheetHeader>
                   <SheetTitle>나만의 프롬프트</SheetTitle>
                   <SheetDescription>
@@ -131,6 +123,7 @@ export default function App() {
                       .map((t) => (
                         <Button
                           key={t.id}
+                          size="sm"
                           variant="secondary"
                           onClick={() => toggle(t.id)}
                         >
@@ -139,7 +132,13 @@ export default function App() {
                       ))}
                   </div>
                   <label htmlFor="prompt">완성 프롬프트</label>
-                  <Textarea id="prompt" readOnly value={prompt} rows={14} />
+                  <Textarea
+                    id="prompt"
+                    size="builder"
+                    readOnly
+                    value={prompt}
+                    rows={14}
+                  />
                   <Button
                     disabled={!selected.length}
                     onClick={() => copy(prompt)}
@@ -175,7 +174,8 @@ export default function App() {
               <span>정확한 프롬프트가 됩니다.</span>
             </h1>
             <p className="intro">
-              레이아웃부터 모션까지, 48개의 UI 용어를 직접 움직여 보세요.
+              레이아웃부터 모션까지, 48개의 UI 용어를 카드 안에서 직접 움직여
+              보세요.
               <br className="desktop-break" /> 마음에 드는 동작을 담으면 나만의
               구현 프롬프트가 완성됩니다.
             </p>
@@ -252,6 +252,7 @@ export default function App() {
                 <Search size={17} />
                 <Input
                   aria-label="용어 검색"
+                  leadingIcon
                   placeholder="용어 검색 · 예: 스프링, Tabs"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
@@ -262,6 +263,7 @@ export default function App() {
               {categories.map(([id, label]) => (
                 <Button
                   key={id}
+                  size="sm"
                   variant={category === id ? "default" : "outline"}
                   aria-pressed={category === id}
                   onClick={() => setCategory(id)}
@@ -276,11 +278,12 @@ export default function App() {
               ))}
             </div>
             <p className="result-count" aria-live="polite">
-              {shown.length}개 용어 · 데모 열기에서 직접 체험하세요
+              {shown.length}개 용어 · 카드에서 바로 체험하세요 · 화면 밖의
+              모션은 중지됩니다
             </p>
             <div className="term-grid">
               {shown.map((t) => (
-                <Card key={t.id} data-term={t.id} className="term-card">
+                <Card key={t.id} data-term={t.id} variant="catalog">
                   <CardHeader>
                     <div className="card-meta">
                       <span>{String(t.id).padStart(2, "0")}</span>
@@ -288,33 +291,28 @@ export default function App() {
                         {t.ep === 1 ? "UI & 구조" : "모션 & 반응"}
                       </Badge>
                     </div>
-                    <CardTitle>{t.ko}</CardTitle>
-                    <CardDescription className="english">
+                    <CardTitle>
+                      <h3>{t.ko}</h3>
+                    </CardTitle>
+                    <CardDescription size="caption" className="mt-1">
                       {t.en}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="term-desc">{t.desc}</p>
-                    <div
-                      className={`mini-art mini-${t.cat}`}
-                      aria-hidden="true"
-                    >
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+                    <InlineDemo id={t.id} title={t.ko} reduced={reduce} />
                     <div className="card-actions">
                       <Button
                         variant="outline"
-                        onClick={(e) => {
-                          origin.current = e.currentTarget;
-                          setActive(t);
-                        }}
+                        size="sm"
+                        onClick={() => copy(t.prompt, t.id)}
+                        aria-label={`${t.ko} 예시 복사`}
                       >
-                        <Play size={14} />
-                        데모 열기
+                        <Copy size={14} />
+                        예시 복사
                       </Button>
                       <Button
+                        size="sm"
                         variant={
                           selected.includes(t.id) ? "secondary" : "ghost"
                         }
@@ -326,6 +324,20 @@ export default function App() {
                         {selected.includes(t.id) ? "담음" : "담기"}
                       </Button>
                     </div>
+                    <details
+                      className="term-prompt"
+                      open={copyFailedTerm === t.id}
+                    >
+                      <summary>프롬프트 예시 보기</summary>
+                      <p>{t.prompt}</p>
+                      {copyFailedTerm === t.id && (
+                        <Textarea
+                          aria-label={`${t.ko} 직접 복사용 예시`}
+                          value={t.prompt}
+                          readOnly
+                        />
+                      )}
+                    </details>
                   </CardContent>
                 </Card>
               ))}
@@ -353,64 +365,6 @@ export default function App() {
             GitHub ↗
           </a>
         </footer>
-        <Dialog
-          open={!!active}
-          onOpenChange={(open) => {
-            if (!open) setActive(null);
-          }}
-        >
-          <DialogContent
-            className="demo-dialog"
-            onCloseAutoFocus={(e) => {
-              e.preventDefault();
-              requestAnimationFrame(() =>
-                origin.current?.focus({ preventScroll: true }),
-              );
-            }}
-          >
-            <DialogHeader>
-              <DialogTitle>{active?.ko}</DialogTitle>
-              <DialogDescription>
-                {active?.en} · {active?.desc}
-              </DialogDescription>
-            </DialogHeader>
-            {active && (
-              <Suspense fallback={<p>데모를 불러오는 중…</p>}>
-                <Demo
-                  key={`${active.id}-${reduce}`}
-                  id={active.id}
-                  reduced={reduce}
-                />
-              </Suspense>
-            )}
-            <div className="prompt-example">
-              <strong>이렇게 요청해 보세요</strong>
-              <p>{active?.prompt}</p>
-              <Button
-                variant="outline"
-                onClick={() => active && copy(active.prompt)}
-              >
-                <Copy />
-                예시 복사
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => active && toggle(active.id)}
-              >
-                {active && selected.includes(active.id)
-                  ? "프롬프트에서 빼기"
-                  : "프롬프트에 담기"}
-              </Button>
-              {copyError && (
-                <Textarea
-                  aria-label="직접 복사용 예시"
-                  readOnly
-                  value={active?.prompt}
-                />
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
         <Toaster richColors position="bottom-center" />
       </div>
     </MotionConfig>
