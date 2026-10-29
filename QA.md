@@ -36,3 +36,20 @@ Official lint cannot analyze arbitrary plain CSS declarations/parent selectors, 
 - 11 system reduced-motion examples passed, including finite SVG Motion Path and confetti.
 - Official lint, 7 official failure fixtures, positive and Demo/App boundary fixtures, 5 supplemental fixtures, TypeScript/build and lockfile clean-install dry run passed.
 - The local motion toggle also passed computed-style checks on both portaled overlays: animation and transition duration were 0s even without the OS preference.
+
+## Automatic loop and progress enhancement
+
+21 time-based examples now repeat automatically while visible; example 24 remains a manual-only save-feedback illustration. Each visual pose, progress value, scene-time label and seek position consumes the same clock snapshot. No independent cosmetic timer, CSS animation or SMIL timeline runs in those 22 examples. The shared RAF source publishes at up to 30fps, suspends off-screen/hidden, and preserves explicit user pause and position through filtering/remount in a bounded page-session map.
+
+New verification results:
+
+- Clock model: forward/hold/reset boundaries, wrapping, multiple wraps, immediate pause, manual completion and zero-delta resume passed. Registry checks confirm 21 automatic examples and one manual example.
+- Browser: visible wrap after a 700ms end hold, smooth reset, pause/resume/replay, retained pause after filtering, off-screen suspension and no hidden-interval catch-up passed.
+- Actual pose equality: at progress 0.17308, the quadratic-path dot was x=65 and y≈51.33876 and the meter was 17.30769%; all derive from the same position (within rounding tolerance).
+- The browser runner keeps background tabs marked visible. Hidden-document behavior was therefore tested with a controlled `document.hidden`/`visibilitychange` event, explicitly reported as simulated rather than a native tab-switch result.
+- All 48 examples passed desktop and 390×844 touch-mobile smoke with no page errors or horizontal page overflow; maximum mounted examples were 9 desktop and 2 mobile.
+- All 22 timed examples passed OS reduced-motion static start/end controls, plus local reduced-motion suspension. Sliders are keyboard/touch operable with labels on the actual thumbs.
+- Scroll and pointer meters match real input positions; they do not auto-scroll or synthesize pointer input. Actual Modal/Drawer open only on explicit action. Save feedback never auto-runs.
+- Copy/select/builder success and failure paths leave a user-paused timeline unchanged.
+
+See [timeline design and limits](docs/animation-timelines.md) and `scripts/browser-timeline*.js` for the retained scenarios. The prior modal-only/initial-inline test scripts were replaced by the current timeline scenarios; the portaled-overlay reduced-motion regression remains.

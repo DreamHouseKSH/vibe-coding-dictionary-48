@@ -54,7 +54,13 @@ for (const [code, rule] of officialBad) {
   console.log(`EXPECTED FAILURE ${rule}: ${diagnostic.message}`);
 }
 const officialRules = [...new Set(officialBad.map(([, rule]) => rule))];
-for (const file of ["src/App.tsx", "src/Demo.tsx", "src/InlineDemo.tsx"]) {
+for (const file of [
+  "src/App.tsx",
+  "src/Demo.tsx",
+  "src/InlineDemo.tsx",
+  "src/TimedDemo.tsx",
+  "src/GestureProgress.tsx",
+]) {
   const config = await eslint.calculateConfigForFile(file);
   for (const rule of officialRules)
     assert.equal(
@@ -130,7 +136,9 @@ const { terms } = await import(
 );
 assert.equal(terms.length, 48);
 assert.equal(new Set(terms.map((t) => t.id)).size, 48);
-const demos = fs.readFileSync("src/Demo.tsx", "utf8");
+const demos =
+  fs.readFileSync("src/Demo.tsx", "utf8") +
+  fs.readFileSync("src/TimedDemo.tsx", "utf8");
 for (const t of terms)
   assert(new RegExp(`case ${t.id}:`).test(demos), `missing demo ${t.id}`);
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
@@ -140,3 +148,5 @@ assert(!fs.readFileSync("index.html", "utf8").includes("cdn.tailwindcss.com"));
 console.log(
   "UI checks passed: 7 official negative fixtures covering all 6 rules, positive fixtures and demo/chrome boundary; 5 supplemental fixtures; canonical components; 48 demo cases; pinned production dependencies.",
 );
+
+await import("./check-timeline.mjs");

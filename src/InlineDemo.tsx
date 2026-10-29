@@ -23,7 +23,7 @@ export function InlineDemo({
     }
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(entry.isIntersecting),
-      { rootMargin: "80px 0px" },
+      { rootMargin: "0px" },
     );
     observer.observe(host.current);
     return () => observer.disconnect();

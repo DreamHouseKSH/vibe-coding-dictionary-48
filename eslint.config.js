@@ -53,7 +53,7 @@ export default [
   },
   {
     files: ["src/Demo.tsx"],
-    // Only three named educational effects may change a Button's appearance.
+    // Only the direct hover/focus/touch example changes a Button appearance.
     rules: {
       "shadcn/no-restyle": [
         "error",
@@ -62,15 +62,7 @@ export default [
           contracts: [
             {
               pattern: "^Button$",
-              allow: [
-                "layout",
-                "hover-demo",
-                "is-hovered",
-                "smooth-demo",
-                "selected-demo",
-                "morph",
-                "morphed",
-              ],
+              allow: ["layout", "hover-demo", "is-hovered"],
             },
           ],
         },

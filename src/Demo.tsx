@@ -40,21 +40,23 @@ import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { CSSProperties, ReactNode } from "react";
+import TimedDemo, { timelineSpecs } from "./TimedDemo";
+import { GestureProgress } from "./GestureProgress";
 
-export default function Demo({
-  id,
-  reduced,
-}: {
-  id: number;
-  reduced: boolean;
-}) {
+export default function Demo(props: { id: number; reduced: boolean }) {
+  return timelineSpecs[props.id] ? (
+    <TimedDemo {...props} />
+  ) : (
+    <GestureDemo {...props} />
+  );
+}
+
+function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
   const systemReduce = useReducedMotion(),
     reduce = reduced || !!systemReduce;
   const [on, setOn] = useState(false),
-    [cycle, setCycle] = useState(0),
-    [running, setRunning] = useState(false),
     [value, setValue] = useState(0),
-    [text, setText] = useState("VIBE CODING"),
+    [gesture, setGesture] = useState(0),
     [choice, setChoice] = useState("최신순"),
     [pos, setPos] = useState({ x: 0, y: 0 });
   const scroll = useRef<HTMLDivElement>(null);
@@ -77,123 +79,99 @@ export default function Demo({
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
   }, [id]);
-  function replay() {
-    setCycle((c) => c + 1);
-    setRunning(true);
-    setOn((v) => !v);
-  }
-  useEffect(() => {
-    if (!running || ![24, 33, 34, 36].includes(id)) return;
-    const start = performance.now(),
-      target = "VIBE CODING";
-    const timer = window.setInterval(
-      () => {
-        const p = reduce
-          ? 1
-          : Math.min((performance.now() - start) / (id === 24 ? 700 : 1400), 1);
-        if (id === 33) setText(target.slice(0, Math.ceil(target.length * p)));
-        if (id === 34)
-          setText(
-            target
-              .split("")
-              .map((c, i) =>
-                i < target.length * p
-                  ? c
-                  : "·*#+"[(i + Math.floor(p * 40)) % 4],
-              )
-              .join(""),
-          );
-        if (id === 36) setValue(Math.round(p * 4800));
-        if (id === 24) setText(p === 1 ? "✓ 저장 완료" : "저장 중…");
-        if (p === 1) {
-          clearInterval(timer);
-          setRunning(false);
-        }
-      },
-      reduce ? 1 : 35,
-    );
-    return () => clearInterval(timer);
-  }, [cycle, id, reduce, running]);
   const dur = reduce ? 0 : 0.9;
-  const ball = <div className="ball">UI</div>;
   const tiles = (n = 4) =>
     Array.from({ length: n }, (_, i) => (
       <div className="tile" key={i}>
         {String(i + 1).padStart(2, "0")}
       </div>
     ));
-  const action = <Button onClick={replay}>다시 재생</Button>;
   const scrolling = (kind: number) => (
-    <div
-      className="scroll-demo"
-      ref={scroll}
-      tabIndex={0}
-      role="region"
-      aria-label="스크롤 체험 영역"
-      onScroll={(e) => setValue(e.currentTarget.scrollTop)}
-    >
+    <>
       <div
-        className={
-          kind === 18 ? "scroll-story scroll-story-reveal" : "scroll-story"
-        }
+        className="scroll-demo"
+        ref={scroll}
+        tabIndex={0}
+        role="region"
+        aria-label="스크롤 체험 영역"
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          setValue(el.scrollTop);
+          setGesture(
+            (el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight)) *
+              100,
+          );
+        }}
       >
-        {kind === 6 ? (
-          <>
-            <div className="sticky-bar">상단에 붙어 있는 헤더</div>
-            {tiles(8)}
-          </>
-        ) : kind === 18 ? (
-          <>
-            <p className="scroll-hint">↓ 아래로 스크롤해 보세요</p>
-            <motion.div
-              className="tile reveal-tile"
-              initial={reduce ? false : { opacity: 0, y: 35 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ root: scroll, once: false }}
-              transition={{ duration: dur }}
-            >
-              뷰포트 진입 → 등장
-            </motion.div>
-          </>
-        ) : kind === 22 ? (
-          <>
-            <div
-              className="parallax-back"
-              style={
+        <div
+          className={
+            kind === 18 ? "scroll-story scroll-story-reveal" : "scroll-story"
+          }
+        >
+          {kind === 6 ? (
+            <>
+              <div className="sticky-bar">상단에 붙어 있는 헤더</div>
+              {tiles(8)}
+            </>
+          ) : kind === 18 ? (
+            <>
+              <p className="scroll-hint">↓ 아래로 스크롤해 보세요</p>
+              <motion.div
+                className="tile reveal-tile"
+                initial={reduce ? false : { opacity: 0, y: 35 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ root: scroll, once: false }}
+                transition={{ duration: dur }}
+              >
+                뷰포트 진입 → 등장
+              </motion.div>
+            </>
+          ) : kind === 22 ? (
+            <>
+              <div
+                className="parallax-back"
+                style={
+                  {
+                    "--parallax-y": `${reduce ? 0 : value * 0.65}px`,
+                  } as CSSProperties
+                }
+              >
+                BACKGROUND · 느리게
+              </div>
+              <div
+                className="parallax-front"
+                style={
+                  {
+                    "--parallax-y": `${reduce ? 0 : value * 0.15}px`,
+                  } as CSSProperties
+                }
+              >
+                FOREGROUND · 빠르게
+              </div>
+              <p className="scroll-hint">↓ 스크롤하면 깊이가 달라집니다</p>
+            </>
+          ) : (
+            <div className="pinned">
+              <strong>PINNED / 고정된 무대</strong>
+              <h3>
                 {
-                  "--parallax-y": `${reduce ? 0 : value * 0.65}px`,
-                } as CSSProperties
-              }
-            >
-              BACKGROUND · 느리게
+                  ["01 기획", "02 디자인", "03 배포"][
+                    Math.min(2, Math.floor(value / 145))
+                  ]
+                }
+              </h3>
+              <p>바깥 이야기는 스크롤하고 무대는 고정됩니다.</p>
             </div>
-            <div
-              className="parallax-front"
-              style={
-                {
-                  "--parallax-y": `${reduce ? 0 : value * 0.15}px`,
-                } as CSSProperties
-              }
-            >
-              FOREGROUND · 빠르게
-            </div>
-            <p className="scroll-hint">↓ 스크롤하면 깊이가 달라집니다</p>
-          </>
-        ) : (
-          <div className="pinned">
-            <strong>PINNED / 고정된 무대</strong>
-            <h3>
-              {
-                ["01 기획", "02 디자인", "03 배포"][
-                  Math.min(2, Math.floor(value / 145))
-                ]
-              }
-            </h3>
-            <p>바깥 이야기는 스크롤하고 무대는 고정됩니다.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
+      <GestureProgress
+        value={gesture}
+        label="실제 세로 스크롤 위치"
+        start="맨 위"
+        end="맨 아래"
+      />
+    </>
   );
   let content: ReactNode;
   switch (id) {
@@ -415,6 +393,13 @@ export default function Demo({
         <>
           <div
             className="snap-track"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              setGesture(
+                (el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)) *
+                  100,
+              );
+            }}
             ref={scroll}
             tabIndex={0}
             role="region"
@@ -430,6 +415,12 @@ export default function Demo({
               ),
             )}
           </div>
+          <GestureProgress
+            value={gesture}
+            label="실제 가로 스크롤 위치"
+            start="첫 카드"
+            end="마지막 카드"
+          />
           <div className="controls">
             <Button
               variant="outline"
@@ -481,54 +472,29 @@ export default function Demo({
       break;
     case 17:
       content = (
-        <Button
-          variant="outline"
-          className={`hover-demo ${on ? "is-hovered" : ""}`}
-          onClick={() => setOn(!on)}
-        >
-          호버 · 포커스 · 터치해 보세요
-        </Button>
+        <>
+          <Button
+            variant="outline"
+            className={`hover-demo ${on ? "is-hovered" : ""}`}
+            onPointerEnter={() => setGesture(100)}
+            onPointerLeave={() => setGesture(0)}
+            onFocus={() => setGesture(100)}
+            onBlur={() => setGesture(0)}
+            onClick={() => setOn(!on)}
+          >
+            호버 · 포커스 · 터치해 보세요
+          </Button>
+          <GestureProgress
+            value={on ? 100 : gesture}
+            label="실제 호버·포커스·터치 상태"
+            start="기본"
+            end="반응"
+          />
+        </>
       );
       break;
     case 18:
       content = scrolling(18);
-      break;
-    case 19:
-    case 35:
-      content = (
-        <>
-          {action}
-          <div
-            key={cycle}
-            className={`stagger-row ${running ? "playing" : ""}`}
-          >
-            {(id === 35 ? "VIBE".split("") : [1, 2, 3, 4]).map((x, i) => (
-              <span
-                key={i}
-                className="tile"
-                style={
-                  {
-                    "--demo-delay": `${reduce ? 0 : i * 0.13}s`,
-                  } as CSSProperties
-                }
-              >
-                {x}
-              </span>
-            ))}
-          </div>
-        </>
-      );
-      break;
-    case 20:
-      content = (
-        <Button
-          variant="outline"
-          className={`smooth-demo ${on ? "selected-demo" : ""}`}
-          onClick={() => setOn(!on)}
-        >
-          상태 전환 · 200ms
-        </Button>
-      );
       break;
     case 21:
       content = (
@@ -550,308 +516,6 @@ export default function Demo({
     case 22:
       content = scrolling(22);
       break;
-    case 24:
-      content = (
-        <Button onClick={replay} disabled={running}>
-          {running || cycle ? text : "저장하기"}
-        </Button>
-      );
-      break;
-    case 25:
-      content = (
-        <>
-          <Button onClick={() => setOn(!on)}>페이드 전환</Button>
-          <motion.div
-            className="motion-stage"
-            animate={{ opacity: on ? 0 : 1 }}
-            transition={{ duration: dur }}
-          >
-            {ball}
-          </motion.div>
-        </>
-      );
-      break;
-    case 26:
-      content = (
-        <>
-          {action}
-          <div className="motion-stage">
-            <motion.div
-              key={cycle}
-              initial={{ x: reduce ? 0 : -150 }}
-              animate={{ x: 0 }}
-              transition={{ duration: dur, ease: "easeOut" }}
-            >
-              {ball}
-            </motion.div>
-          </div>
-        </>
-      );
-      break;
-    case 27:
-      content = (
-        <>
-          {action}
-          <div className="motion-stage">
-            <motion.div
-              key={cycle}
-              initial={{ scale: reduce ? 1 : 0.2 }}
-              animate={{ scale: reduce ? 1 : [0.2, 1.18, 1] }}
-              transition={{ duration: dur }}
-            >
-              {ball}
-            </motion.div>
-          </div>
-        </>
-      );
-      break;
-    case 28:
-      content = (
-        <>
-          <Button onClick={() => setOn(!on)}>같은 거리 · 다른 속도 곡선</Button>
-          {(["linear", "easeIn", "easeOut", "easeInOut"] as const).map((e) => (
-            <div className="easing-row" key={e}>
-              <span>{e}</span>
-              <motion.div
-                className="dot"
-                animate={{ x: on ? 120 : 0 }}
-                transition={{ duration: reduce ? 0 : 1.5, ease: e }}
-              />
-            </div>
-          ))}
-        </>
-      );
-      break;
-    case 29:
-      content = (
-        <>
-          <Button onClick={() => setOn(!on)}>스프링 이동</Button>
-          <div className="motion-stage">
-            <motion.div
-              animate={{ x: on ? 100 : -100 }}
-              transition={
-                reduce
-                  ? { duration: 0 }
-                  : { type: "spring", stiffness: 170, damping: 9 }
-              }
-            >
-              {ball}
-            </motion.div>
-          </div>
-        </>
-      );
-      break;
-    case 30:
-      content = (
-        <>
-          {action}
-          <div className="motion-stage">
-            <motion.div
-              key={cycle}
-              initial={{ y: reduce ? 0 : -65 }}
-              animate={{ y: reduce ? 0 : [-65, 25, -22, 25, 5, 25] }}
-              transition={{
-                duration: reduce ? 0 : 1.4,
-                times: [0, 0.3, 0.52, 0.72, 0.86, 1],
-              }}
-            >
-              {ball}
-            </motion.div>
-          </div>
-        </>
-      );
-      break;
-    case 31:
-      content = (
-        <>
-          <Button onClick={() => setOn(!on)}>동시에 시작 신호</Button>
-          {[0, 0.5].map((delay, i) => (
-            <div className="easing-row" key={delay}>
-              <span>{i ? "delay .5s / 1.2s" : "delay 0s / .6s"}</span>
-              <motion.div
-                className="dot"
-                animate={{ x: on ? 90 : 0 }}
-                transition={{
-                  delay: reduce ? 0 : delay,
-                  duration: reduce ? 0 : i ? 1.2 : 0.6,
-                }}
-              />
-            </div>
-          ))}
-        </>
-      );
-      break;
-    case 32:
-    case 39:
-      content = (
-        <>
-          <Button onClick={() => setRunning(!running)}>
-            {running ? "일시정지" : "루프 시작"}
-          </Button>
-          <div className="motion-stage loop-clip">
-            <motion.div
-              animate={
-                id === 32
-                  ? { y: running && !reduce ? [0, -25, 0] : 0 }
-                  : { x: running && !reduce ? ["0%", "-50%"] : "0%" }
-              }
-              transition={{
-                duration: id === 32 ? 2 : 7,
-                repeat: running && !reduce ? Infinity : 0,
-                ease: id === 32 ? "easeInOut" : "linear",
-              }}
-            >
-              {id === 32 ? (
-                ball
-              ) : (
-                <span className="marquee-text">
-                  DESIGN · CODE · PLAY · DESIGN · CODE · PLAY ·{" "}
-                </span>
-              )}
-            </motion.div>
-          </div>
-        </>
-      );
-      break;
-    case 33:
-    case 34:
-    case 36:
-      content = (
-        <>
-          {action}
-          <div className="motion-stage">
-            <strong
-              className="type-demo"
-              aria-label={id === 36 ? "카운트업 결과" : "텍스트 효과 결과"}
-            >
-              {id === 36 ? value.toLocaleString() : text}
-              {id === 33 ? "▏" : ""}
-            </strong>
-          </div>
-        </>
-      );
-      break;
-    case 37:
-      content = (
-        <>
-          {action}
-          <svg
-            key={cycle}
-            viewBox="0 0 300 110"
-            className="drawing"
-            aria-label="선 그리기 데모"
-            role="img"
-          >
-            <motion.path
-              d="M10 80 Q65 0 100 60 T200 50 T290 30"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="4"
-              initial={{ pathLength: reduce ? 1 : 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: reduce ? 0 : 1.8 }}
-            />
-          </svg>
-        </>
-      );
-      break;
-    case 38:
-      content = (
-        <Button
-          variant="outline"
-          className={`morph ${on ? "morphed" : ""}`}
-          onClick={() => setOn(!on)}
-          aria-label={
-            on ? "닫기 아이콘을 메뉴로 전환" : "메뉴 아이콘을 닫기로 전환"
-          }
-          aria-pressed={on}
-        >
-          <span />
-          <span />
-          <span />
-        </Button>
-      );
-      break;
-    case 40:
-      content = (
-        <>
-          {action}
-          <div className="path-stage">
-            <svg
-              key={cycle}
-              viewBox="0 0 300 120"
-              role="img"
-              aria-label="곡선을 따라 이동하는 점"
-            >
-              <path
-                d="M20 100 Q150 -70 280 100"
-                fill="none"
-                stroke="currentColor"
-                strokeDasharray="4 5"
-              />
-              {running && !reduce ? (
-                <circle r="8" fill="currentColor">
-                  <animateMotion
-                    dur="1.3s"
-                    fill="freeze"
-                    path="M20 100 Q150 -70 280 100"
-                  />
-                </circle>
-              ) : (
-                <circle
-                  cx={reduce ? 280 : 20}
-                  cy="100"
-                  r="8"
-                  fill="currentColor"
-                />
-              )}
-            </svg>
-          </div>
-        </>
-      );
-      break;
-    case 41:
-      content = (
-        <>
-          <Button onClick={replay}>페이지 전환</Button>
-          <div key={cycle} className="wipe-stage">
-            <strong>{on ? "PAGE B" : "PAGE A"}</strong>
-            {running && <div className="wipe" />}
-          </div>
-        </>
-      );
-      break;
-    case 42:
-      content = (
-        <>
-          <Button onClick={() => setOn(!on)}>
-            {on ? "목록으로 돌아가기" : "카드에서 상세로"}
-          </Button>
-          <div className={`shared-stage ${on ? "detail" : ""}`}>
-            <motion.div
-              layout
-              layoutId="shared-card"
-              className="shared-card"
-              transition={{ duration: reduce ? 0 : 0.65 }}
-            >
-              <motion.div layoutId="shared-image" className="shared-image">
-                ◇
-              </motion.div>
-              <motion.h3 layout="position">
-                하나의 요소, 이어지는 맥락
-              </motion.h3>
-              {on && (
-                <p>
-                  목록의 이미지와 제목이 새 위치·크기로 이동해 상세 화면이
-                  됩니다.
-                </p>
-              )}
-            </motion.div>
-            {!on && <div className="shared-placeholder">다른 카드</div>}
-          </div>
-        </>
-      );
-      break;
     case 43:
       content = scrolling(43);
       break;
@@ -863,6 +527,13 @@ export default function Demo({
           </p>
           <div
             className="horizontal-demo"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              setGesture(
+                (el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)) *
+                  100,
+              );
+            }}
             ref={scroll}
             tabIndex={0}
             role="region"
@@ -872,8 +543,8 @@ export default function Demo({
           </div>
           <Button
             variant="outline"
-            onClick={(e) =>
-              e.currentTarget.previousElementSibling?.scrollBy({
+            onClick={() =>
+              scroll.current?.scrollBy({
                 left: 200,
                 behavior: reduce ? "instant" : "smooth",
               })
@@ -881,6 +552,12 @@ export default function Demo({
           >
             다음 카드 →
           </Button>
+          <GestureProgress
+            value={gesture}
+            label="실제 가로 스크롤 위치"
+            start="첫 카드"
+            end="마지막 카드"
+          />
         </>
       );
       break;
@@ -953,32 +630,12 @@ export default function Demo({
             value={[pos.x * 100]}
             onValueChange={(v) => setPos({ x: v[0] / 100, y: v[0] / 100 })}
           />
-        </>
-      );
-      break;
-    case 48:
-      content = (
-        <>
-          <Button onClick={replay}>축하하기</Button>
-          <div key={cycle} className="confetti-stage">
-            <strong>{cycle ? "축하합니다!" : "작은 성공을 축하하세요."}</strong>
-            {running &&
-              !reduce &&
-              Array.from({ length: 36 }, (_, i) => (
-                <span
-                  className="confetti-piece"
-                  key={i}
-                  style={
-                    {
-                      "--confetti-x": `${(i * 37) % 100}%`,
-                      "--demo-delay": `${(i % 6) * 0.05}s`,
-                      "--confetti-rotate": `${i * 27}deg`,
-                    } as CSSProperties
-                  }
-                />
-              ))}
-          </div>
-          {reduce && <p>모션 감소: 색종이 대신 축하 메시지를 표시합니다.</p>}
+          <GestureProgress
+            value={50 + pos.x * 100}
+            label="실제 포인터 가로 위치"
+            start="왼쪽"
+            end="오른쪽"
+          />
         </>
       );
       break;
@@ -995,20 +652,6 @@ export default function Demo({
         <span>{reduce ? "모션 감소 적용" : "직접 체험"}</span>
       </div>
       <div className="demo-content">{content}</div>
-      {[19, 24, 32, 33, 34, 35, 36, 39, 40, 41, 48].includes(id) && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setRunning(false);
-            setCycle(0);
-            setValue(0);
-            setOn(false);
-            setText(id === 24 ? "저장하기" : "VIBE CODING");
-          }}
-        >
-          중지 / 초기화
-        </Button>
-      )}
     </section>
   );
 }

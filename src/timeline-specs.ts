@@ -1,0 +1,31 @@
+import type { TimelineSpec } from "./timeline-model";
+const spec = (
+  name: string,
+  duration: number,
+  reset = 350,
+  auto = true,
+): TimelineSpec => ({ name, duration, hold: 700, reset, auto });
+export const timelineSpecs: Record<number, TimelineSpec> = {
+  19: spec("스태거", 890),
+  20: spec("스무스 트랜지션", 200),
+  24: spec("저장 피드백", 700, 0, false),
+  25: spec("페이드", 1200),
+  26: spec("슬라이드", 900),
+  27: spec("스케일 팝", 900),
+  28: spec("이징", 1500),
+  29: spec("스프링", 1500),
+  30: spec("바운스", 1400),
+  31: spec("듀레이션과 딜레이", 1700),
+  32: spec("플로팅", 2400, 0),
+  33: spec("타이프라이터", 1400),
+  34: spec("텍스트 스크램블", 1400),
+  35: spec("스플릿 텍스트", 720),
+  36: spec("카운트업", 1500),
+  37: spec("라인 드로잉", 1800),
+  38: spec("아이콘 모핑", 800),
+  39: spec("마퀴", 4000, 0),
+  40: spec("모션 패스", 1300),
+  41: spec("페이지 와이프", 1000),
+  42: spec("쉐어드 엘리먼트", 1400),
+  48: spec("컨페티", 1400, 0),
+};

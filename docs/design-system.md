@@ -25,13 +25,11 @@ Inside `src/components/ui`, `no-restyle`, `no-arbitrary-values` and `require-sta
 
 Named variants own catalog Card treatment, caption CardDescription, builder SheetContent/Textarea, circle Skeleton and leading-icon Input. Button owns responsive touch target sizes. App-level selectors that previously restyled those controls were removed. The default Nova neutral theme tokens are unchanged.
 
-Only in `src/Demo.tsx`, Button's contract additionally permits these exact educational classes:
+Only in `src/Demo.tsx`, Button's contract additionally permits these exact hover-example classes:
 
 - `hover-demo`, `is-hovered`: demonstrate elevation on hover/focus/touch (17).
-- `smooth-demo`, `selected-demo`: demonstrate a 200ms state transition (20).
-- `morph`, `morphed`: demonstrate the three-line menu becoming an X (38).
 
-The same classes on an App Button fail `no-restyle`. Other appearance overrides still fail in Demo. No official rules are turned off in Demo. All inline motion variables remain checked; confetti uses theme colors, parallax uses `--parallax-y`, and glare position uses `--glare-x/y`. Motion Path uses a responsive SVG; its finite animation is omitted when motion is reduced.
+The same classes on an App Button fail `no-restyle`. Other appearance overrides still fail in Demo. No official rules are turned off in Demo. All inline motion variables remain checked; confetti uses theme colors, parallax uses `--parallax-y`, and glare position uses `--glare-x/y`. Timed animations now use one shared visible-time clock. SVG attributes and CSS custom properties are calculated from that same snapshot as the progress meter, without independent CSS/SMIL animations. Reduced motion uses manual static poses.
 
 ## Supplemental checks and proof
 
@@ -42,3 +40,7 @@ The supplemental `local/*` rules enforce canonical imports, component use instea
 ## Limits
 
 Official lint analyzes source usage; it is not proof of pixel identity, accessibility, or runtime behavior. As its documentation explains, plain CSS declarations and parent selectors are outside its rule analysis. Layout and educational scene geometry in `App.css` therefore require review and browser QA. Adding a class allow-list entry, a token, a variant or an ESLint override is a policy change and should be reviewed. There are no `eslint-disable` directives in the app/demo files; fixtures verify that the six official rules stay enabled.
+
+## Automatic timeline policy
+
+`TimedDemo.tsx` has no additional lint exceptions: all six official rules remain errors. Its dynamic values are readable CSS custom-property literals or native SVG geometry attributes. The only remaining Button effect exception used by gesture demos is the existing hover example. Timing and duration values are animation parameters rather than class-name appearance overrides.

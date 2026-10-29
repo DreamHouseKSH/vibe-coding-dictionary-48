@@ -1147,3 +1147,239 @@ body:has(.app.reduce-motion) *::after {
   transition: none !important;
   scroll-behavior: auto !important;
 }
+/* Timed scenes have no CSS/SMIL/library-owned animation clocks: every pose,
+   progress value and time label is rendered from the same timeline snapshot. */
+.clock-scene {
+  min-height: 180px;
+  margin: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--muted);
+  border-radius: 8px;
+}
+.clock-ball {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  transform: translate(var(--clock-x), var(--clock-y)) scale(var(--clock-scale));
+  opacity: var(--clock-opacity);
+}
+.clock-stagger {
+  display: flex;
+  gap: 7px;
+  padding: 16px;
+  width: 100%;
+}
+.clock-item {
+  flex: 1;
+  padding: 14px;
+  opacity: var(--item-progress);
+  transform: translateY(calc((1 - var(--item-progress)) * 20px));
+}
+.clock-color {
+  width: 110px;
+  height: 70px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-size: 25px;
+  background: color-mix(
+    in oklch,
+    var(--muted),
+    var(--primary) var(--clock-mix)
+  );
+  color: var(--background);
+  border: 1px solid var(--border);
+}
+.clock-save {
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+}
+.clock-save p {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 10px;
+}
+.clock-easing {
+  width: 100%;
+  max-height: 180px;
+  padding: 12px;
+}
+.clock-easing text {
+  font: 10px monospace;
+  fill: currentColor;
+}
+.clock-morph {
+  width: 90px;
+  height: 90px;
+}
+.clock-marquee-window {
+  overflow: hidden;
+  width: 100%;
+}
+.clock-marquee {
+  display: flex;
+  width: max-content;
+  transform: translateX(var(--marquee-x));
+  font-size: 22px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.clock-path {
+  width: 100%;
+  height: 160px;
+}
+.clock-wipe {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.clock-curtain {
+  position: absolute;
+  inset: 0;
+  background: var(--primary);
+  transform: translateX(var(--wipe-x));
+}
+.clock-scene-shared {
+  min-height: 330px;
+  align-items: flex-start;
+  background: transparent;
+}
+.clock-shared {
+  width: 100%;
+  position: relative;
+  min-height: 330px;
+}
+.clock-shared .shared-placeholder {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 48%;
+  z-index: 0;
+}
+.clock-shared-card {
+  position: relative;
+  z-index: 1;
+  width: calc(48% + 52% * var(--shared-progress));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--background);
+}
+.clock-shared-image {
+  height: calc(100px + 70px * var(--shared-progress));
+  display: grid;
+  place-items: center;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 40px;
+}
+.clock-shared-card h3 {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 12px;
+}
+.clock-shared-detail {
+  max-height: calc(90px * var(--shared-progress));
+  opacity: var(--shared-progress);
+  overflow: hidden;
+}
+.clock-shared-detail p {
+  padding: 0 12px 12px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.clock-confetti {
+  width: 100%;
+  height: 180px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-size: 13px;
+}
+.clock-piece {
+  position: absolute;
+  left: var(--piece-x);
+  top: var(--piece-y);
+  transform: rotate(var(--piece-rotate));
+  opacity: var(--piece-opacity);
+  width: 7px;
+  height: 11px;
+  background: var(--primary);
+}
+.clock-piece:nth-of-type(3n + 1) {
+  background: var(--muted-foreground);
+}
+.clock-piece:nth-of-type(3n + 2) {
+  background: var(--border);
+}
+.timeline-controls {
+  padding: 0 14px 14px;
+  display: grid;
+  gap: 10px;
+}
+.timeline-ends,
+.timeline-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.timeline-readout {
+  flex-wrap: wrap;
+  gap: 4px;
+  line-height: 1.6;
+  font-variant-numeric: tabular-nums;
+}
+.timeline-meter {
+  display: block;
+  width: 100%;
+  height: 7px;
+  appearance: none;
+  border: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--muted);
+  accent-color: var(--primary);
+}
+.timeline-meter::-webkit-progress-bar {
+  background: var(--muted);
+  border-radius: 10px;
+}
+.timeline-meter::-webkit-progress-value {
+  background: var(--primary);
+  border-radius: 10px;
+}
+.timeline-meter::-moz-progress-bar {
+  background: var(--primary);
+  border-radius: 10px;
+}
+.timeline-buttons {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.timeline-note {
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--muted-foreground);
+}
+.gesture-progress {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+}
