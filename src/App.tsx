@@ -363,7 +363,9 @@ export default function App() {
             className="demo-dialog"
             onCloseAutoFocus={(e) => {
               e.preventDefault();
-              origin.current?.focus();
+              requestAnimationFrame(() =>
+                origin.current?.focus({ preventScroll: true }),
+              );
             }}
           >
             <DialogHeader>

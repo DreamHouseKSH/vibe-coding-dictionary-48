@@ -58,6 +58,25 @@ export default function Demo({
     [choice, setChoice] = useState("최신순"),
     [pos, setPos] = useState({ x: 0, y: 0 });
   const scroll = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = scroll.current;
+    if (id !== 44 || !el) return;
+    function wheel(event: WheelEvent) {
+      const next = Math.max(
+        0,
+        Math.min(
+          el!.scrollWidth - el!.clientWidth,
+          el!.scrollLeft + event.deltaY,
+        ),
+      );
+      if (next !== el!.scrollLeft) {
+        event.preventDefault();
+        el!.scrollLeft = next;
+      }
+    }
+    el.addEventListener("wheel", wheel, { passive: false });
+    return () => el.removeEventListener("wheel", wheel);
+  }, [id]);
   function replay() {
     setCycle((c) => c + 1);
     setRunning(true);
@@ -814,20 +833,10 @@ export default function Demo({
           </p>
           <div
             className="horizontal-demo"
+            ref={scroll}
             tabIndex={0}
             role="region"
             aria-label="가로 스크롤 체험"
-            onWheel={(e) => {
-              const el = e.currentTarget;
-              const next = Math.max(
-                0,
-                Math.min(
-                  el.scrollWidth - el.clientWidth,
-                  el.scrollLeft + e.deltaY,
-                ),
-              );
-              if (next !== el.scrollLeft) el.scrollLeft = next;
-            }}
           >
             {tiles(8)}
           </div>

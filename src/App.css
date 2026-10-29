@@ -1134,3 +1134,20 @@ footer > span {
     min-height: 36px;
   }
 }
+
+@media (max-width: 720px) {
+  .motion-setting {
+    font-size: 10px;
+    gap: 5px;
+  }
+  button:not([role="switch"]):not([role="slider"]) {
+    min-height: 44px;
+  }
+  .brand {
+    font-size: 12px;
+  }
+  .demo-dialog > button[data-slot="dialog-close"] {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}

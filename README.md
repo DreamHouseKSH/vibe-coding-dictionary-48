@@ -34,3 +34,7 @@ Node 24 이상. `npm ci`, `npm run dev`. GitHub Pages 경로는 `/vibe-coding-di
 ## 유지보수
 
 `src/Demo.tsx`는 ID별 데모 라우터, `src/terms.ts`는 출처 요약 기반 데이터, `src/App.tsx`는 검색·필터·프롬프트 조합기입니다. 비밀키, 유료 API, 런타임 CDN은 사용하지 않습니다.
+
+## 브라우저 검증 재현
+
+Playwright CLI로 로컬 서버를 연 다음 `run-code`에 `scripts/browser-batch1.js`, `browser-batch2.js`, `browser-mobile.js`, `browser-final.js`의 함수 내용을 순서대로 전달합니다. 각 파일은 저장소에서 확인 가능한 브라우저 검증 시나리오입니다. 브라우저 검증은 로컬에서 수행했으며 CI는 lint·negative fixture·타입·빌드를 담당합니다. 모바일 검증은 390×844 에뮬레이션이며 실제 iPhone 실기기 검증은 아닙니다.
