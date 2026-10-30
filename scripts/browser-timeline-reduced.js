@@ -25,7 +25,10 @@ async (page) => {
       throw Error("end static");
   }
   await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.getByRole("button", { name: "화면 및 모션 설정", exact: true }).click();
   await page.getByRole("switch", { name: "모션 줄이기" }).click();
+  await page.keyboard.press("Escape");
+  await page.getByRole("dialog").waitFor({ state: "hidden" });
   const h = page.locator('[data-demo-host="40"]');
   await h.scrollIntoViewIfNeeded();
   const d = h.locator("[data-demo]");
@@ -35,7 +38,10 @@ async (page) => {
   await page.waitForTimeout(200);
   if ((await d.getAttribute("data-clock-elapsed")) !== e)
     throw Error("local reduced auto");
+  await page.getByRole("button", { name: "화면 및 모션 설정", exact: true }).click();
   await page.getByRole("switch", { name: "모션 줄이기" }).click();
+  await page.keyboard.press("Escape");
+  await page.getByRole("dialog").waitFor({ state: "hidden" });
   return {
     systemReducedStatic: ids.length,
     localReducedStatic: true,

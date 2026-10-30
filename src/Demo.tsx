@@ -42,16 +42,18 @@ import { toast } from "sonner";
 import type { CSSProperties, ReactNode } from "react";
 import TimedDemo, { timelineSpecs } from "./TimedDemo";
 import { GestureProgress } from "./GestureProgress";
+import { DemoOptionControls } from "./DemoOptionControls";
+import { useDemoOptions } from "./demo-options";
 
 export default function Demo(props: { id: number; reduced: boolean }) {
-  return timelineSpecs[props.id] ? (
-    <TimedDemo {...props} />
-  ) : (
-    <GestureDemo {...props} />
-  );
+  return <div>
+    <DemoOptionControls id={props.id} />
+    {timelineSpecs[props.id] ? <TimedDemo {...props} /> : <GestureDemo {...props} />}
+  </div>;
 }
 
 function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
+  const option = useDemoOptions(id);
   const systemReduce = useReducedMotion(),
     reduce = reduced || !!systemReduce;
   const [on, setOn] = useState(false),
@@ -59,6 +61,8 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     [gesture, setGesture] = useState(0),
     [choice, setChoice] = useState("최신순"),
     [pos, setPos] = useState({ x: 0, y: 0 });
+  const sortChoices = ["최신순", "인기순", "이름순"].slice(0, id === 12 ? option : 3);
+  const sortChoice = sortChoices.includes(choice) ? choice : "최신순";
   const scroll = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = scroll.current;
@@ -68,7 +72,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
         0,
         Math.min(
           el!.scrollWidth - el!.clientWidth,
-          el!.scrollLeft + event.deltaY,
+          el!.scrollLeft + event.deltaY * option,
         ),
       );
       if (next !== el!.scrollLeft) {
@@ -78,7 +82,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     }
     el.addEventListener("wheel", wheel, { passive: false });
     return () => el.removeEventListener("wheel", wheel);
-  }, [id]);
+  }, [id, option]);
   const dur = reduce ? 0 : 0.9;
   const tiles = (n = 4) =>
     Array.from({ length: n }, (_, i) => (
@@ -117,8 +121,9 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
             <>
               <p className="scroll-hint">↓ 아래로 스크롤해 보세요</p>
               <motion.div
+                key={option}
                 className="tile reveal-tile"
-                initial={reduce ? false : { opacity: 0, y: 35 }}
+                initial={reduce ? false : { opacity: 0, y: option }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ root: scroll, once: false }}
                 transition={{ duration: dur }}
@@ -132,7 +137,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
                 className="parallax-back"
                 style={
                   {
-                    "--parallax-y": `${reduce ? 0 : value * 0.65}px`,
+                    "--parallax-y": `${reduce ? 0 : value * option}px`,
                   } as CSSProperties
                 }
               >
@@ -156,7 +161,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
               <h3>
                 {
                   ["01 기획", "02 디자인", "03 배포"][
-                    Math.min(2, Math.floor(value / 145))
+                    Math.min(2, Math.floor(value / option))
                   ]
                 }
               </h3>
@@ -194,18 +199,9 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     case 2:
       content = (
         <>
-          <label htmlFor="width">가상 화면 너비: {value || 100}%</label>
-          <Slider
-            id="width"
-            aria-label="가상 화면 너비"
-            min={35}
-            max={100}
-            value={[value || 100]}
-            onValueChange={(v) => setValue(v[0])}
-          />
           <div
             className="resizable-demo"
-            style={{ "--demo-width": `${value || 100}%` } as CSSProperties}
+            style={{ "--demo-width": `${option}%` } as CSSProperties}
           >
             <div className="responsive-tiles">{tiles(6)}</div>
           </div>
@@ -225,7 +221,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
       );
       break;
     case 4:
-      content = <div className="bento">{tiles(4)}</div>;
+      content = <div className="bento">{tiles(option)}</div>;
       break;
     case 5:
       content = (
@@ -267,15 +263,15 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
       break;
     case 8:
       content = (
-        <Tabs defaultValue="개요">
+        <Tabs key={option} defaultValue="개요">
           <TabsList>
-            {["개요", "기능", "요금"].map((x) => (
+            {["개요", "기능", "요금"].slice(0, option).map((x) => (
               <TabsTrigger key={x} value={x}>
                 {x}
               </TabsTrigger>
             ))}
           </TabsList>
-          {["개요", "기능", "요금"].map((x) => (
+          {["개요", "기능", "요금"].slice(0, option).map((x) => (
             <TabsContent key={x} value={x}>
               <div className="tile">{x} 탭의 내용입니다.</div>
             </TabsContent>
@@ -286,16 +282,10 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     case 9:
       content = (
         <Accordion type="single" collapsible>
-          <AccordionItem value="faq">
-            <AccordionTrigger>바이브코딩이란 무엇인가요?</AccordionTrigger>
-            <AccordionContent>
-              자연어로 의도를 전달하고 결과를 확인하며 구현하는 방식입니다.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="faq2">
-            <AccordionTrigger>다시 접을 수 있나요?</AccordionTrigger>
-            <AccordionContent>같은 질문을 다시 누르세요.</AccordionContent>
-          </AccordionItem>
+          {Array.from({ length: option }, (_, i) => <AccordionItem key={i} value={`faq-${i}`}>
+            <AccordionTrigger>{["바이브코딩이란 무엇인가요?", "다시 접을 수 있나요?", "키보드도 되나요?", "여러 질문을 넣을 수 있나요?"][i]}</AccordionTrigger>
+            <AccordionContent>{["자연어로 의도를 전달하고 결과를 확인하며 구현하는 방식입니다.", "같은 질문을 다시 누르세요.", "Tab으로 이동하고 Enter로 여닫습니다.", "옵션 슬라이더로 질문 수를 조절하세요."][i]}</AccordionContent>
+          </AccordionItem>)}
         </Accordion>
       );
       break;
@@ -313,6 +303,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
                 보세요.
               </DialogDescription>
             </DialogHeader>
+            {Array.from({ length: option }, (_, i) => <p key={i}>안내 {i + 1}: 작업 내용을 검토한 뒤 창을 닫아 주세요.</p>)}
           </DialogContent>
         </Dialog>
       );
@@ -321,13 +312,13 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
       content = (
         <Sheet>
           <SheetTrigger asChild>
-            <Button>오른쪽 드로워 열기</Button>
+            <Button>{option ? "오른쪽" : "왼쪽"} 드로워 열기</Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent side={option ? "right" : "left"}>
             <SheetHeader>
               <SheetTitle>설정 패널</SheetTitle>
               <SheetDescription>
-                오른쪽에서 열리는 보조 작업 공간. Escape 또는 바깥을 눌러
+                선택한 방향에서 열리는 보조 작업 공간. Escape 또는 바깥을 눌러
                 닫으세요.
               </SheetDescription>
             </SheetHeader>
@@ -339,11 +330,11 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
       content = (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">정렬: {choice} ▾</Button>
+            <Button variant="outline">정렬: {sortChoice} ▾</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            <DropdownMenuRadioGroup value={choice} onValueChange={setChoice}>
-              {["최신순", "인기순", "이름순"].map((x) => (
+            <DropdownMenuRadioGroup value={sortChoice} onValueChange={setChoice}>
+              {sortChoices.map((x) => (
                 <DropdownMenuRadioItem key={x} value={x}>
                   {x}
                 </DropdownMenuRadioItem>
@@ -356,7 +347,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     case 13:
       content = (
         <>
-          <Tooltip>
+          <Tooltip delayDuration={option}>
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
@@ -381,7 +372,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
     case 14:
       content = (
         <Button
-          onClick={() => toast.success("저장되었습니다.", { duration: 3000 })}
+          onClick={() => toast.success("저장되었습니다.", { duration: option })}
         >
           저장 알림 띄우기
         </Button>
@@ -426,7 +417,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
               variant="outline"
               onClick={() =>
                 scroll.current?.scrollBy({
-                  left: -scroll.current.clientWidth,
+                  left: -scroll.current.clientWidth * option / 100,
                   behavior: reduce ? "instant" : "smooth",
                 })
               }
@@ -437,7 +428,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
               variant="outline"
               onClick={() =>
                 scroll.current?.scrollBy({
-                  left: scroll.current.clientWidth,
+                  left: scroll.current.clientWidth * option / 100,
                   behavior: reduce ? "instant" : "smooth",
                 })
               }
@@ -461,8 +452,7 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
               <>
                 <Skeleton shape="circle" className="size-12" />
                 <div className="grow">
-                  <Skeleton className="h-4 w-3/4 mb-3" />
-                  <Skeleton className="h-4 w-1/2" />
+                  {Array.from({ length: option }, (_, i) => <Skeleton key={i} className="h-4 w-3/4 mb-3" />)}
                 </div>
               </>
             )}
@@ -582,8 +572,8 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
             {id === 45 ? (
               <motion.div
                 animate={{
-                  x: reduce ? 0 : pos.x * 35,
-                  y: reduce ? 0 : pos.y * 25,
+                  x: reduce ? 0 : pos.x * 35 * option,
+                  y: reduce ? 0 : pos.y * 25 * option,
                 }}
               >
                 <Button onClick={() => toast("자석 버튼을 눌렀습니다.")}>
@@ -599,15 +589,15 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
                     x: reduce ? 0 : pos.x * 260,
                     y: reduce ? 0 : pos.y * 110,
                   }}
-                  transition={{ type: "spring", stiffness: 140, damping: 18 }}
+                  transition={{ type: "spring", stiffness: option, damping: 18 }}
                 />
               </>
             ) : (
               <motion.div
                 className="tilt-card"
                 animate={{
-                  rotateX: reduce ? 0 : -pos.y * 25,
-                  rotateY: reduce ? 0 : pos.x * 25,
+                  rotateX: reduce ? 0 : -pos.y * option,
+                  rotateY: reduce ? 0 : pos.x * option,
                 }}
               >
                 <div
@@ -651,7 +641,9 @@ function GestureDemo({ id, reduced }: { id: number; reduced: boolean }) {
         <span>LIVE EXAMPLE / {String(id).padStart(2, "0")}</span>
         <span>{reduce ? "모션 감소 적용" : "직접 체험"}</span>
       </div>
-      <div className="demo-content">{content}</div>
+      <div className="demo-option-scope" data-option-id={id} style={{ "--option-value": `${option}${[7, 15, 23].includes(id) ? "%" : "px"}` } as CSSProperties}>
+        <div className="demo-content">{content}</div>
+      </div>
     </section>
   );
 }

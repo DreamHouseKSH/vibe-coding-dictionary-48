@@ -53,3 +53,16 @@ New verification results:
 - Copy/select/builder success and failure paths leave a user-paused timeline unchanged.
 
 See [timeline design and limits](docs/animation-timelines.md) and `scripts/browser-timeline*.js` for the retained scenarios. The prior modal-only/initial-inline test scripts were replaced by the current timeline scenarios; the portaled-overlay reduced-motion regression remains.
+
+## Settings drawer and 48 live options — 2026-10-30 cloud verification
+
+Passed on this change:
+- `npm run check`: official @shadcn/lint 0.2.3, all six strict rules and existing negative fixtures, TypeScript/build, timeline model checks, new 48-option bounds/reset/prompt checks and 12 accent contrast pairs (minimum 5.48:1).
+- Cloud Chrome, separate test tab: every one of 48 options exercised with keyboard Home/End and reset; actual declared min/max/default values confirmed.
+- Right settings Sheet: initial focus, forward/backward focus trap, Escape dismissal and focus return; dark/blue semantic colors applied immediately and survived reload.
+- Actual sidebar geometry changed from 72px to 140px, and builder text included `사이드바 너비: 140px` plus global settings.
+- Reduced-motion static start/end poses checked on 24, 31, 36, 40, 48. Modal 10 and Drawer 11 portal animation/transition durations were 0s; Escape worked. Drawer option moved the actual panel to the left.
+- Automatic repeat off: motion-path replay finished at 6000ms with paused=true and cycles=0. Scrub snapshot at 1% matched elapsed60ms, progressbar1%, dot x22.6. Live duration change retained normalized position after React effect flush.
+- Original shared RAF and visibility subscription remain intact; no independent timers were introduced.
+
+Limits: Current cloud CUA exposes no viewport/emulateMedia/full-Playwright execution API. Mobile layout and live OS preference changes were source-reviewed, not device-emulated or tested on a real iPhone. Retained browser-timeline/overlay scripts were updated for the new settings entrypoint; their full standalone suites were not rerun in this cloud environment. Equivalent supported CUA actions above were run. A long all-timeline reduced-motion batch hit the tool time limit; only separately completed representative results are claimed. `scripts/browser-options.js` is retained for a future full Playwright environment; the CUA 48-option keyboard sweep was executed instead. Blocked-storage behavior was source-reviewed, not browser fault-injected.

@@ -44,3 +44,9 @@ Official lint analyzes source usage; it is not proof of pixel identity, accessib
 ## Automatic timeline policy
 
 `TimedDemo.tsx` has no additional lint exceptions: all six official rules remain errors. Its dynamic values are readable CSS custom-property literals or native SVG geometry attributes. The only remaining Button effect exception used by gesture demos is the existing hover example. Timing and duration values are animation parameters rather than class-name appearance overrides.
+
+## User settings and live demo options
+
+The right-hand Settings Sheet is an explicit user-requested global overlay. Radix owns focus trapping, Escape and focus return; existing Dialog/Drawer demos stay inline-launchable. Theme/accent tokens live in `index.css`, including the portaled sheets/toasts; no lint exceptions were added. Light/dark/system and violet/blue/green presets use semantic tokens. `check-settings.mjs` verifies all 12 accent text pairs at >=4.5:1 (minimum 5.48:1).
+
+Global preferences are validated and persisted locally. OS reduced motion always wins; the explicit reduction switch adds a manual-static override. Automatic looping and 0.25–2× clock speed share the original visible-only RAF clock. Turning looping off finishes the current motion once and pauses. Manual save feedback is never auto-started. Every demo has a bounded live option with units/reset, stored locally and included in copied prompts. Scene-specific CSS custom properties express geometry, not component restyling. Storage failures retain session functionality.

@@ -19,7 +19,8 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
-import { Switch } from "@/components/ui/switch";
+import { SettingsDrawer } from "./SettingsDrawer";
+import { usePreferences } from "./preferences";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import {
@@ -31,6 +32,7 @@ import {
   Search,
 } from "lucide-react";
 import { terms } from "./terms";
+import { useAllDemoOptions, demoOptionPrompt } from "./demo-options";
 import { InlineDemo } from "./InlineDemo";
 
 const categories = [
@@ -43,10 +45,12 @@ const categories = [
   ["ep2-adv", "전환 · 반응"],
 ] as const;
 export default function App() {
+  const { reduced: reduce, preferences } = usePreferences();
+  useAllDemoOptions();
+  const configuredPrompt = (t: typeof terms[number]) => `${t.prompt}\n실시간 설정 — ${demoOptionPrompt(t.id)}`;
   const [query, setQuery] = useState(""),
     [category, setCategory] = useState("all"),
     [selected, setSelected] = useState<number[]>([]),
-    [reduce, setReduce] = useState(false),
     [copyError, setCopyError] = useState(false),
     [copyFailedTerm, setCopyFailedTerm] = useState<number | null>(null);
   const shown = terms.filter(
@@ -60,9 +64,9 @@ export default function App() {
     "다음 조건으로 반응형 웹페이지를 구현해줘.\n\n" +
     terms
       .filter((t) => selected.includes(t.id))
-      .map((t) => `- ${t.ko} (${t.en}): ${t.prompt}`)
+      .map((t) => `- ${t.ko} (${t.en}): ${configuredPrompt(t)}`)
       .join("\n") +
-    "\n\n키보드, 터치, 명확한 포커스, prefers-reduced-motion을 지원해줘.";
+    `\n\n화면 설정: 테마 ${preferences.theme}, 강조색 ${preferences.accent}, 모션 ${reduce ? "줄이기" : "시스템"}, 자동 반복 ${preferences.autoLoop ? "켜기" : "끄기"}, 재생 속도 ${preferences.speed}배.\n키보드, 터치, 명확한 포커스, prefers-reduced-motion을 지원해줘.`;
   function toggle(id: number) {
     setSelected((s) =>
       s.includes(id) ? s.filter((x) => x !== id) : [...s, id],
@@ -92,15 +96,7 @@ export default function App() {
             <span>VIBE / 48</span>
           </a>
           <div className="header-actions">
-            <label htmlFor="reduce" className="motion-setting">
-              <Switch
-                id="reduce"
-                checked={reduce}
-                onCheckedChange={setReduce}
-                aria-label="모션 줄이기"
-              />
-              모션 줄이기
-            </label>
+            <SettingsDrawer />
             <Sheet>
               <SheetTrigger asChild>
                 <Button>
@@ -305,7 +301,7 @@ export default function App() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copy(t.prompt, t.id)}
+                        onClick={() => copy(configuredPrompt(t), t.id)}
                         aria-label={`${t.ko} 예시 복사`}
                       >
                         <Copy size={14} />
@@ -329,11 +325,11 @@ export default function App() {
                       open={copyFailedTerm === t.id}
                     >
                       <summary>프롬프트 예시 보기</summary>
-                      <p>{t.prompt}</p>
+                      <p>{configuredPrompt(t)}</p>
                       {copyFailedTerm === t.id && (
                         <Textarea
                           aria-label={`${t.ko} 직접 복사용 예시`}
-                          value={t.prompt}
+                          value={configuredPrompt(t)}
                           readOnly
                         />
                       )}

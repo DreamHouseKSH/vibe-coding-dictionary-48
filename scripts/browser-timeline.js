@@ -1,6 +1,4 @@
 async (page) => {
-  for (const tab of page.context().pages())
-    if (tab !== page && tab.url() === "about:blank") await tab.close();
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.reload();

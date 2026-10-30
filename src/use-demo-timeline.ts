@@ -1,3 +1,4 @@
+import { usePreferences } from "./preferences";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import {
   documentVisible,
@@ -18,15 +19,29 @@ export function useDemoTimeline(
   spec: TimelineSpec,
   reduced: boolean,
 ) {
+  const { preferences } = usePreferences();
+  const effectiveAuto = spec.auto && preferences.autoLoop;
   const [frame, setFrame] = useState<TimelineState>(
     () =>
       saved.get(id) ?? {
         elapsed: reduced && spec.auto ? spec.duration : 0,
-        paused: !spec.auto,
+        paused: !effectiveAuto,
         cycles: 0,
       },
   );
   const current = useRef(frame);
+  const previousSpec = useRef(spec);
+  useEffect(() => {
+    const previous = previousSpec.current;
+    if (previous.duration !== spec.duration) {
+      const position = timelinePosition(current.current.elapsed, previous);
+      const next = { ...current.current, elapsed: position.progress * spec.duration };
+      current.current = next;
+      saved.set(id, next);
+      setFrame({ ...next });
+    }
+    previousSpec.current = spec;
+  }, [id, spec]);
   const visible = useSyncExternalStore(
     subscribeVisibility,
     documentVisible,
@@ -43,7 +58,7 @@ export function useDemoTimeline(
     return subscribeFrames((delta, now) => {
       const previous = current.current;
       if (previous.paused || document.hidden) return;
-      const next = advanceTimeline(previous, delta, spec);
+      const next = advanceTimeline(previous, delta * preferences.speed, { ...spec, auto: effectiveAuto });
       current.current = next;
       saved.set(id, next);
       // Both the visual pose and progress use this exact snapshot at 30fps.
@@ -56,11 +71,12 @@ export function useDemoTimeline(
         setFrame({ ...next });
       }
     });
-  }, [id, spec, reduced, visible, frame.paused]);
+  }, [id, spec, reduced, visible, frame.paused, preferences.speed, effectiveAuto]);
   const position = timelinePosition(frame.elapsed, spec);
   return {
     ...frame,
     ...position,
+    automatic: effectiveAuto,
     reduced,
     visible,
     playing: !frame.paused && !reduced && visible,
@@ -69,7 +85,7 @@ export function useDemoTimeline(
       commit({
         ...current.current,
         elapsed:
-          !spec.auto && current.current.elapsed >= spec.duration
+          !effectiveAuto && current.current.elapsed >= spec.duration
             ? 0
             : current.current.elapsed,
         paused: !current.current.paused,

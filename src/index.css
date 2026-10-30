@@ -4,6 +4,7 @@
 @import "@fontsource-variable/geist";
 
 @import "./App.css";
+@import "./demo-options.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -130,3 +131,12 @@
     @apply font-sans;
     }
 }
+/* Semantic accent pairs: dark foreground on pale accents, white on deep accents. */
+:root[data-accent="violet"] { --primary: #6d28d9; --primary-foreground: #ffffff; --ring: #7c3aed; --accent: #ede9fe; --accent-foreground: #4c1d95; }
+:root[data-accent="blue"] { --primary: #1d4ed8; --primary-foreground: #ffffff; --ring: #2563eb; --accent: #dbeafe; --accent-foreground: #1e3a8a; }
+:root[data-accent="green"] { --primary: #047857; --primary-foreground: #ffffff; --ring: #059669; --accent: #d1fae5; --accent-foreground: #064e3b; }
+:root.dark[data-accent="violet"] { --primary: #c4b5fd; --primary-foreground: #2e1065; --ring: #c4b5fd; --accent: #3b2064; --accent-foreground: #ede9fe; }
+:root.dark[data-accent="blue"] { --primary: #93c5fd; --primary-foreground: #172554; --ring: #93c5fd; --accent: #1e3a5f; --accent-foreground: #dbeafe; }
+:root.dark[data-accent="green"] { --primary: #6ee7b7; --primary-foreground: #022c22; --ring: #6ee7b7; --accent: #064e3b; --accent-foreground: #d1fae5; }
+html[data-motion="reduce"] { scroll-behavior: auto; }
+html[data-motion="reduce"] *, html[data-motion="reduce"] *::before, html[data-motion="reduce"] *::after { animation-duration: 0s !important; transition-duration: 0s !important; scroll-behavior: auto !important; }

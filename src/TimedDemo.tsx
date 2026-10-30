@@ -1,4 +1,5 @@
-import type { CSSProperties } from "react";
+import { useMemo, type CSSProperties } from "react";
+import { useDemoOptions } from "./demo-options";
 import { useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -21,11 +22,13 @@ export default function TimedDemo({
   id: number;
   reduced: boolean;
 }) {
-  const systemReduce = useReducedMotion(),
-    settings = timelineSpecs[id];
+  const duration = useDemoOptions(id);
+  const systemReduce = useReducedMotion();
+  const settings = useMemo(() => ({ ...timelineSpecs[id], duration }), [id, duration]);
   const clock = useDemoTimeline(id, settings, reduced || !!systemReduce),
     p = clock.progress,
-    ms = p * settings.duration;
+    ms = p * settings.duration,
+    sceneMs = p * timelineSpecs[id].duration;
   const target = "VIBE CODING";
   const ball = (x = 0, y = 0, scale = 1, opacity = 1) => (
     <div
@@ -55,7 +58,7 @@ export default function TimedDemo({
               style={
                 {
                   "--item-progress": clamp(
-                    (ms - i * (id === 35 ? 120 : 130)) /
+                    (sceneMs - i * (id === 35 ? 120 : 130)) /
                       (id === 35 ? 360 : 500),
                   ),
                 } as CSSProperties
@@ -72,7 +75,7 @@ export default function TimedDemo({
         <div
           className="clock-color"
           style={{ "--clock-mix": `${p * 100}%` } as CSSProperties}
-          aria-label="200ms 동안 선택 색상이 변하는 예시"
+          aria-label={`${duration}ms 동안 선택 색상이 변하는 예시`}
         >
           ◇
         </div>
@@ -159,15 +162,15 @@ export default function TimedDemo({
           className="clock-easing"
           viewBox="0 0 300 120"
           role="img"
-          aria-label="지연 0초 지속 0.6초, 지연 0.5초 지속 1.2초 비교"
+          aria-label="전체 지속 시간에 비례하는 두 지연·지속 시간 비교"
         >
           {[0, 1].map((i) => (
             <g key={i}>
               <text x="0" y={35 + i * 50}>
-                {i ? "0.5s + 1.2s" : "0s + 0.6s"}
+                {i ? `${(duration * 0.5 / 1700).toFixed(2)}s + ${(duration * 1.2 / 1700).toFixed(2)}s` : `0s + ${(duration * 0.6 / 1700).toFixed(2)}s`}
               </text>
               <circle
-                cx={110 + 160 * clamp((ms - (i ? 500 : 0)) / (i ? 1200 : 600))}
+                cx={110 + 160 * clamp((sceneMs - (i ? 500 : 0)) / (i ? 1200 : 600))}
                 cy={31 + i * 50}
                 r="7"
                 fill="currentColor"
@@ -195,7 +198,7 @@ export default function TimedDemo({
             .map((ch, i) =>
               i < target.length * p
                 ? ch
-                : "·*#+"[(i + Math.floor(ms / 45)) % 4],
+                : "·*#+"[(i + Math.floor(sceneMs / 45)) % 4],
             )
             .join("")}
         </strong>
@@ -357,7 +360,7 @@ export default function TimedDemo({
           ? `끝 장면 유지 · ${settings.hold / 1000}초`
           : clock.phase === "reset"
             ? "시작으로 되돌리는 중"
-            : settings.auto
+            : clock.automatic
               ? "자동 반복 중"
               : "수동 재생 중";
   return (
@@ -375,7 +378,7 @@ export default function TimedDemo({
         <span>
           {clock.reduced
             ? "모션 감소 적용"
-            : settings.auto
+            : clock.automatic
               ? "보이는 동안 자동 반복"
               : "수동 체험"}
         </span>

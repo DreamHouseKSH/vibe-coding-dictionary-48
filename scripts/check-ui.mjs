@@ -150,3 +150,5 @@ console.log(
 );
 
 await import("./check-timeline.mjs");
+
+await import("./check-settings.mjs");
