@@ -1,3 +1,7 @@
+# VIBE / UI — 원자료 48 + 확장 제안 8
+
+현재 사이트는 원자료 48개를 보존하고, [커버리지 분석](docs/coverage-gap.md)으로 선정한 8개 실전 패턴을 별도 확장 제안으로 제공합니다. 수익화나 새 서비스 연결 없이 브라우저 안에서 체험하는 학습 사전입니다.
+
 # VIBE / 48
 
 한국어 UI · 레이아웃 · 모션 인터랙티브 사전. [공개 사이트](https://dreamhouseksh.github.io/vibe-coding-dictionary-48/)

@@ -479,5 +479,13 @@ export const terms = [
     prompt:
       "첫 결제가 끝나면 화면 위쪽에서 컨페티가 2초 동안 터지게 해줘. 모션 감소 설정을 켠 사용자에게는 생략하고.",
   },
+  {"id": 49, "ep": 3, "cat": "extension", "ko": "폼 검증과 오류 안내", "en": "Form Validation", "desc": "입력 규칙을 확인하고 어떤 값을 어떻게 고칠지 알려주는 패턴.", "prompt": "필드 label과 오류를 aria-describedby로 연결하고, 제출 시 오류 요약과 첫 오류로 포커스를 이동해줘. 입력값을 지우지 말고 색상 외 텍스트로 수정 방법을 알려줘."},
+  {"id": 50, "ep": 3, "cat": "extension", "ko": "비동기 상태와 복구", "en": "Async States & Recovery", "desc": "불러오는 중·빈 결과·실패·성공을 구분하고 취소와 재시도로 복구하는 흐름.", "prompt": "비동기 작업에 로딩·빈 결과·실패·성공 상태를 만들고, 중복 실행 방지·취소·재시도를 지원해줘. 상태는 polite live region으로 알리고 취소된 응답은 무시해줘."},
+  {"id": 51, "ep": 3, "cat": "extension", "ko": "낙관적 UI와 실행 취소", "en": "Optimistic UI & Undo", "desc": "응답 전에 화면을 먼저 바꾸되 실패하면 되돌리고 사용자가 작업을 취소할 수 있게 하는 패턴.", "prompt": "즐겨찾기를 낙관적으로 반영하고 처리 중 상태를 구분해줘. 서버 실패 시 이전 값으로 롤백하고, 성공한 변경에는 시간 제한 없는 실행 취소 버튼을 제공해줘."},
+  {"id": 52, "ep": 3, "cat": "extension", "ko": "자동완성 콤보박스", "en": "Autocomplete Combobox", "desc": "텍스트 입력과 선택 목록을 결합해 긴 목록에서 원하는 항목을 빠르게 고르는 패턴.", "prompt": "접근 가능한 콤보박스를 만들어줘. 입력에 포커스를 유지하며 방향키·Enter·Escape를 지원하고 aria-expanded, controls, activedescendant와 목록 선택 상태를 정확히 연결해줘."},
+  {"id": 53, "ep": 3, "cat": "extension", "ko": "드래그 정렬과 대체 조작", "en": "Reorder & Drag Alternatives", "desc": "항목 순서를 끌어서 바꾸면서 탭·키보드만으로도 같은 작업을 할 수 있게 하는 패턴.", "prompt": "목록 드래그 정렬에 터치와 포인터 취소를 지원해줘. 각 항목의 위로·아래로 버튼도 제공하고 이동 후 포커스와 새 위치 안내를 유지해줘."},
+  {"id": 54, "ep": 3, "cat": "extension", "ko": "컨테이너 쿼리", "en": "Container Queries", "desc": "브라우저 전체가 아니라 자신을 담은 영역의 너비에 따라 컴포넌트 배치를 바꾸는 CSS.", "prompt": "부모에 container-type:inline-size를 설정하고 @container 크기 쿼리로 좁은 카드와 넓은 카드를 전환해줘. 지원하지 않는 브라우저에서는 기본 세로 배치를 유지해줘."},
+  {"id": 55, "ep": 3, "cat": "extension", "ko": "페이지네이션", "en": "Pagination", "desc": "긴 결과 목록을 페이지 단위로 나누고 현재 위치와 이동 경계를 보여주는 탐색 패턴.", "prompt": "현재 페이지에 aria-current=page를 적용하고 이전·다음 경계를 명확히 해줘. 전체 결과와 현재 범위를 알리며 페이지 크기가 바뀌면 유효한 페이지로 보정해줘."},
+  {"id": 56, "ep": 3, "cat": "extension", "ko": "디바운스와 응답 경합", "en": "Debounce & Stale Responses", "desc": "연속 입력을 묶어 처리하되 늦게 도착한 예전 결과가 최신 결과를 덮지 못하게 하는 패턴.", "prompt": "검색 입력에 디바운스를 적용하고 한글 IME 조합 중에는 요청하지 마. 요청 ID나 취소로 오래된 응답을 무시하고 언마운트 시 타이머를 정리해줘."},
 ] as const;
 export type Term = (typeof terms)[number];

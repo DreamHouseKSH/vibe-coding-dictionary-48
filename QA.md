@@ -66,3 +66,21 @@ Passed on this change:
 - Original shared RAF and visibility subscription remain intact; no independent timers were introduced.
 
 Limits: Current cloud CUA exposes no viewport/emulateMedia/full-Playwright execution API. Mobile layout and live OS preference changes were source-reviewed, not device-emulated or tested on a real iPhone. Retained browser-timeline/overlay scripts were updated for the new settings entrypoint; their full standalone suites were not rerun in this cloud environment. Equivalent supported CUA actions above were run. A long all-timeline reduced-motion batch hit the tool time limit; only separately completed representative results are claimed. `scripts/browser-options.js` is retained for a future full Playwright environment; the CUA 48-option keyboard sweep was executed instead. Blocked-storage behavior was source-reviewed, not browser fault-injected.
+
+## Coverage extension · 2026-10-30
+
+Scope: source48 unchanged + eight visibly labelled extension proposals, IDs49–56. All new cards have when-to-use, cautions, related patterns, official reference, example prompt and a bounded persisted live option. Four-quadrant gap summary is visible above the catalog.
+
+Passed in this cloud change:
+- Full `npm run check`: official six-rule lint and negative fixtures unchanged, 56 demo/option cases, original48+extension8 metadata/source checks, theme contrast checks, typecheck/build.
+- Browser:49 empty submit sets two aria-invalid fields and focuses error summary; correcting name/email succeeds without transmission.
+- 50 loading disables duplicate request; failure→retry→success, empty result, explicit cancellation and no later result after cancellation.
+- 51 immediately shows optimistic13 while confirmed12, failure rolls back12; successful change can be undone to12.
+- 52 ArrowDown/Enter selects 부산, nonexistent text shows empty result; Escape sets expanded=false.
+- 53 button alternative moves 기획 from first to second while retaining focus and announcing new position.
+- 54 same viewport: width40%=116.5px one-column; width100%=294.3px actual two-column @container layout.
+- 55 size2/page6→size5 safely clamps page3 and shows results11–12 with aria-current=page.
+- 56 request ‘카’ followed by ‘카드’ resolves latest two results and later increments ignored-stale-response count to1 without overwriting them.
+- All eight option sliders exercised with Home/End/reset, matching declared min/max/defaults.
+
+Limits: no real network in simulations. IME composition handling is source-reviewed; live input composition, real touch devices and assistive-technology combinations were not exercised. Cloud CUA does not expose mobile viewport/emulated OS APIs; no claim of real iPhone or full screen-reader compliance. Existing timeline clock/model is unchanged; its pure tests ran, while the old full Playwright suite is not executable through this CUA API. Screenshots alone are not accessibility proof.

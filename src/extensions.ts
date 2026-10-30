@@ -1,0 +1,11 @@
+export type ExtensionInfo = { when: string; caution: string; related: string; source: string; sourceName: string; priority: string };
+export const extensions: Record<number, ExtensionInfo> = {
+49: {when:'가입·설정처럼 입력을 제출하는 화면',caution:'데모는 로컬 형식 검사입니다. 실제 서비스는 서버 검증도 필요하며 개인정보를 이 데모에 입력하지 마세요.',related:'모달 · 마이크로 인터랙션',source:'https://www.w3.org/WAI/tutorials/forms/notifications/',sourceName:'W3C WAI · 폼 오류 알림',priority:'P0 · 입력 오류 복구'},
+50: {when:'검색·데이터 불러오기처럼 기다림과 실패가 있는 작업',caution:'실제 네트워크 없이 시간을 지연하는 모의 작업입니다. 빈 결과는 오류가 아니며 취소 후 늦은 응답도 적용하면 안 됩니다.',related:'스켈레톤 · 토스트 · 마이크로 인터랙션',source:'https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html',sourceName:'W3C · 상태 메시지',priority:'P0 · 상태와 복구'},
+51: {when:'좋아요·즐겨찾기처럼 되돌릴 수 있는 작은 변경',caution:'모의 저장입니다. 결제·삭제처럼 손실이 큰 작업은 같은 낙관적 처리를 무조건 적용하지 마세요.',related:'토스트 · 마이크로 인터랙션',source:'https://react.dev/reference/react/useOptimistic',sourceName:'React · 낙관적 상태',priority:'P0 · 실패 롤백'},
+52: {when:'항목이 많아 드롭다운을 훑기 어려운 선택 화면',caution:'키보드 패턴을 시연합니다. 실제 보조기기·브라우저 조합에서 별도 검증이 필요합니다.',related:'드롭다운 · 키보드 포커스',source:'https://www.w3.org/WAI/ARIA/apg/patterns/combobox/',sourceName:'W3C APG · Combobox',priority:'P1 · 선택 탐색'},
+53: {when:'할 일·목차·재생 목록의 순서를 바꿀 때',caution:'드래그만 요구하지 마세요. 터치 실기기 검증은 별도이며 위로·아래로 버튼이 동등한 대안입니다.',related:'호버 · 마그네틱 버튼 · 카드 레이아웃',source:'https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html',sourceName:'W3C · 드래그 대체 조작',priority:'P0 · 포인터 외 대안'},
+54: {when:'같은 카드가 사이드바와 본문처럼 다른 너비에 재사용될 때',caution:'크기 기반 컨테이너 쿼리 예시입니다. 미지원 환경은 세로 배치로 유지하며 모든 새 CSS 기능 지원을 의미하지 않습니다.',related:'반응형 레이아웃 · 사이드바',source:'https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Containment/Container_queries',sourceName:'MDN · 컨테이너 쿼리',priority:'P1 · 재사용 반응형'},
+55: {when:'결과 수가 많고 현재 위치·되돌아가기가 중요할 때',caution:'로컬 12개 항목입니다. 실서비스에서는 URL·뒤로가기·데이터 갱신 정책도 설계해야 합니다.',related:'카드 레이아웃 · 탭',source:'https://design-system.service.gov.uk/components/pagination/',sourceName:'GOV.UK · Pagination',priority:'P1 · 긴 목록 탐색'},
+56: {when:'입력할 때마다 검색하거나 원격 유효성을 확인할 때',caution:'디바운스만으로 응답 순서 문제는 해결되지 않습니다. 데모는 로컬 결과와 모의 지연을 사용합니다.',related:'자동완성 · 비동기 상태',source:'https://react.dev/reference/react/useEffect#fetching-data-with-effects',sourceName:'React · 응답 경합과 정리',priority:'P1 · 숨은 시간차 오류'},
+};

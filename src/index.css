@@ -5,6 +5,8 @@
 
 @import "./App.css";
 @import "./demo-options.css";
+@import "./extension-async.css";
+@import "./extension-patterns.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -3,6 +3,14 @@ import { timelineSpecs } from "./timeline-specs";
 export type DemoOption = { label: string; unit: string; min: number; max: number; step: number; initial: number };
 const option = (label: string, unit: string, min: number, max: number, initial: number, step = 1): DemoOption => ({ label, unit, min, max, step, initial });
 export const demoOptions: Record<number, DemoOption> = {
+  49: option("최소 이름 길이", "자", 2, 8, 3),
+  50: option("모의 응답 지연", "ms", 300, 3000, 1200, 100),
+  51: option("모의 저장 지연", "ms", 300, 3000, 1000, 100),
+  52: option("최대 제안 수", "개", 2, 6, 4),
+  53: option("정렬 항목 수", "개", 3, 6, 4),
+  54: option("컨테이너 너비", "%", 40, 100, 100, 5),
+  55: option("페이지당 항목", "개", 2, 5, 3),
+  56: option("입력 대기 시간", "ms", 100, 1000, 350, 50),
   1: option("히어로 안쪽 여백", "px", 12, 48, 24),
   2: option("가상 화면 너비", "%", 35, 100, 100),
   3: option("카드 간격", "px", 0, 24, 8),

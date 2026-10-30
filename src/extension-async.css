@@ -1,0 +1,11 @@
+.extension-async { display: grid; gap: 12px; padding: 14px; font-size: 13px; }
+.extension-async p { margin: 0; overflow-wrap: anywhere; }
+.extension-async label, .extension-async legend { font-weight: 600; }
+.extension-async fieldset { border: 0; padding: 0; min-width: 0; }
+.extension-async legend { margin-bottom: 8px; }
+.extension-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.extension-error-summary { padding: 12px; border: 1px solid var(--destructive); border-radius: var(--radius); }
+.extension-error-summary:focus { outline: 2px solid var(--ring); outline-offset: 2px; }
+.extension-result { min-height: 48px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--muted); }
+.extension-result ul, ul.extension-result { padding-left: 28px; }
+.extension-switch { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

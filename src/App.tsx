@@ -31,6 +31,8 @@ import {
   Copy,
   Search,
 } from "lucide-react";
+import { GapAnalysis } from "./GapAnalysis";
+import { extensions } from "./extensions";
 import { terms } from "./terms";
 import { useAllDemoOptions, demoOptionPrompt } from "./demo-options";
 import { InlineDemo } from "./InlineDemo";
@@ -43,6 +45,7 @@ const categories = [
   ["ep2-basic", "기본 모션"],
   ["ep2-text", "텍스트 · 그래픽"],
   ["ep2-adv", "전환 · 반응"],
+  ["extension", "확장 제안"],
 ] as const;
 export default function App() {
   const { reduced: reduce, preferences } = usePreferences();
@@ -93,7 +96,7 @@ export default function App() {
         <header className="site-header">
           <a href="#top" className="brand">
             <BookOpen size={20} />
-            <span>VIBE / 48</span>
+            <span>VIBE / UI</span>
           </a>
           <div className="header-actions">
             <SettingsDrawer />
@@ -170,7 +173,7 @@ export default function App() {
               <span>정확한 프롬프트가 됩니다.</span>
             </h1>
             <p className="intro">
-              레이아웃부터 모션까지, 48개의 UI 용어를 카드 안에서 직접 움직여
+              원자료 48개 + 확장 제안 8개, UI와 모션을 카드 안에서 직접 움직여
               보세요.
               <br className="desktop-break" /> 마음에 드는 동작을 담으면 나만의
               구현 프롬프트가 완성됩니다.
@@ -182,7 +185,7 @@ export default function App() {
                 </a>
               </Button>
               <p>
-                <strong>48</strong> 용어 <span>/</span> <strong>6</strong>{" "}
+                <strong>{terms.length}</strong> 용어 <span>/</span> <strong>{categories.length - 1}</strong>{" "}
                 카테고리 <span>/</span> 직접 체험
               </p>
             </div>
@@ -205,7 +208,7 @@ export default function App() {
                 <strong>사용자 제공 요약을 바탕으로 재구성</strong>했습니다.
                 영상 제목은 확인했으나 자막·세부 항목은 독립 검증하지
                 못했습니다. 타임스탬프는 제공하지 않습니다. 비공식 학습 자료이며
-                채널의 보증·제휴를 의미하지 않습니다.
+                채널의 보증·제휴를 의미하지 않습니다. 49–56번은 원영상의 내용이 아닌 공식 문서 기반 확장 제안입니다.
               </p>
             </div>
             <div className="source-links">
@@ -235,6 +238,7 @@ export default function App() {
               조건 + 모션 감소
             </p>
           </section>
+          <GapAnalysis />
           <section id="dictionary" className="dictionary">
             <div className="catalog-header">
               <div>
@@ -267,7 +271,7 @@ export default function App() {
                   {label}
                   <span>
                     {id === "all"
-                      ? 48
+                      ? terms.length
                       : terms.filter((t) => t.cat === id).length}
                   </span>
                 </Button>
@@ -284,7 +288,7 @@ export default function App() {
                     <div className="card-meta">
                       <span>{String(t.id).padStart(2, "0")}</span>
                       <Badge variant="secondary">
-                        {t.ep === 1 ? "UI & 구조" : "모션 & 반응"}
+                        {t.ep === 3 ? "확장 제안" : t.ep === 1 ? "UI & 구조" : "모션 & 반응"}
                       </Badge>
                     </div>
                     <CardTitle>
@@ -296,6 +300,7 @@ export default function App() {
                   </CardHeader>
                   <CardContent>
                     <p className="term-desc">{t.desc}</p>
+                    {extensions[t.id] && <details className="extension-context"><summary>언제 쓰고, 무엇을 주의할까요?</summary><p><strong>{extensions[t.id].priority}</strong></p><p>언제: {extensions[t.id].when}</p><p>주의: {extensions[t.id].caution}</p><p>관련 기능: {extensions[t.id].related}</p><a href={extensions[t.id].source} target="_blank" rel="noreferrer">{extensions[t.id].sourceName} ↗</a></details>}
                     <InlineDemo id={t.id} title={t.ko} reduced={reduce} />
                     <div className="card-actions">
                       <Button
@@ -355,7 +360,7 @@ export default function App() {
           </section>
         </main>
         <footer>
-          <span>VIBE / 48</span>
+          <span>VIBE / UI</span>
           <p>이름을 배우고, 움직임을 이해하고, 직접 만들어 보세요.</p>
           <a href="https://github.com/DreamHouseKSH/vibe-coding-dictionary-48">
             GitHub ↗

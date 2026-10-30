@@ -7,7 +7,7 @@ export function SettingsDrawer() {
   const {preferences: p, update, reset, reduced, systemReduced, storageAvailable} = usePreferences();
   return <Sheet><SheetTrigger asChild><Button variant="outline" aria-label="화면 및 모션 설정"><Settings2 />설정</Button></SheetTrigger>
     <SheetContent size="builder" side="right">
-      <SheetHeader><SheetTitle>화면 및 모션 설정</SheetTitle><SheetDescription>48개 데모에 바로 적용됩니다. 설정은 이 브라우저에 저장됩니다.</SheetDescription></SheetHeader>
+      <SheetHeader><SheetTitle>화면 및 모션 설정</SheetTitle><SheetDescription>전체 데모에 바로 적용됩니다. 설정은 이 브라우저에 저장됩니다.</SheetDescription></SheetHeader>
       <div className="settings-body">
         <fieldset><legend>색상 테마</legend><div className="settings-options">{([['system','시스템'],['light','라이트'],['dark','다크']] as const).map(([value,label]) => <Button key={value} variant={p.theme === value ? "default" : "outline"} aria-pressed={p.theme === value} onClick={() => update({theme:value})}>{label}</Button>)}</div></fieldset>
         <fieldset><legend>강조 색상</legend><div className="settings-options">{([['violet','바이올렛'],['blue','블루'],['green','그린']] as const).map(([value,label]) => <Button key={value} variant={p.accent === value ? "default" : "outline"} aria-pressed={p.accent === value} onClick={() => update({accent:value})}>{label}</Button>)}</div><p>버튼, 포커스와 데모 색상이 함께 바뀝니다.</p></fieldset>
