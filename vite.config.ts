@@ -4,6 +4,6 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/vibe-coding-dictionary-48/",
+  base: "./",
   resolve: { alias: { "@": path.resolve(import.meta.dirname, "src") } },
 });
