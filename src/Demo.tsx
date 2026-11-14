@@ -50,7 +50,7 @@ import { useDemoOptions } from "./demo-options";
 export default function Demo(props: { id: number; reduced: boolean }) {
   return <div data-demo={props.id > 48 ? props.id : undefined}>
     <DemoOptionControls id={props.id} />
-    {[49,50,51,56].includes(props.id) ? <ExtensionAsync id={props.id} /> : [52,53,54,55].includes(props.id) ? <ExtensionPatterns id={props.id} /> : timelineSpecs[props.id] ? <TimedDemo {...props} /> : <GestureDemo {...props} />}
+    {[49,50,51,56].includes(props.id) ? <ExtensionAsync id={props.id} /> : [52,53,54,55,57].includes(props.id) ? <ExtensionPatterns id={props.id} /> : timelineSpecs[props.id] ? <TimedDemo {...props} /> : <GestureDemo {...props} />}
   </div>;
 }
 
