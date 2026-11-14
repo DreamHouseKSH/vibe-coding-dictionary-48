@@ -7,6 +7,7 @@
 @import "./demo-options.css";
 @import "./extension-async.css";
 @import "./extension-patterns.css";
+@import "./table-guide.css";
 
 @custom-variant dark (&:is(.dark *));
 
