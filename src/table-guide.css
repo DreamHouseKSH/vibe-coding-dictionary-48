@@ -1,0 +1,59 @@
+.tg-hero { min-height: 0; padding-bottom: 40px; }
+.tg-toc {
+  display: flex; gap: 8px; overflow-x: auto; padding: 12px 0;
+  border-block: 1px solid var(--border); position: sticky; top: 65px; z-index: 10;
+  background: color-mix(in srgb, var(--background) 96%, transparent);
+}
+.tg-toc a {
+  flex: none; padding: 6px 12px; border: 1px solid var(--border); border-radius: 999px;
+  font-size: 13px; white-space: nowrap; color: var(--foreground); min-height: 32px; display: inline-flex; align-items: center;
+}
+.tg-toc a:hover { background: var(--accent); color: var(--accent-foreground); text-decoration: none; }
+.tg-body { padding: 24px 0 64px; display: grid; gap: 56px; }
+.tg-section { scroll-margin-top: 130px; min-width: 0; }
+.tg-section h2 { font-size: clamp(24px, 4vw, 34px); line-height: 1.25; margin: 8px 0 8px; letter-spacing: -0.02em; word-break: keep-all; }
+.tg-meta { font-size: 13px; color: var(--muted-foreground); margin: 0 0 8px; overflow-wrap: anywhere; }
+.tg-meta a, .tg-list a { text-decoration: underline; }
+.tg-lead { color: var(--muted-foreground); max-width: 78ch; margin: 0 0 20px; word-break: keep-all; overflow-wrap: break-word; }
+.tg-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 16px; align-items: start; }
+.tg-groups h3 { font-size: 16px; margin: 0; line-height: 1.4; word-break: keep-all; }
+.tg-list { margin: 0; padding-left: 1.1em; display: grid; gap: 8px; font-size: 14px; word-break: keep-all; overflow-wrap: break-word; }
+.tg-rules { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 8px; counter-reset: rule; }
+.tg-rules li {
+  counter-increment: rule; display: grid; grid-template-columns: 2.2em 1fr auto; gap: 8px; align-items: start;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; word-break: keep-all; overflow-wrap: break-word;
+}
+.tg-rules li::before { content: counter(rule, decimal-leading-zero); font-weight: 700; color: var(--primary); font-variant-numeric: tabular-nums; }
+.tg-actions { display: flex; gap: 8px; margin-bottom: 12px; }
+.tg-prewrap { white-space: pre-wrap; overflow-wrap: break-word; }
+.tg-scroll {
+  overflow: auto; max-height: 22rem; border: 1px solid var(--border); border-radius: 12px; background: var(--card);
+  mask-image: linear-gradient(to right, black calc(100% - 28px), transparent);
+}
+.tg-scroll:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.tg-table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 14px; text-align: left; }
+.tg-table caption { text-align: left; padding: 12px 14px; font-weight: 700; caption-side: top; }
+.tg-table caption span { display: block; font-weight: 400; font-size: 12px; color: var(--muted-foreground); }
+.tg-table th, .tg-table td { padding: 8px 16px; border-bottom: 1px solid var(--border); vertical-align: top; min-height: 48px; }
+.tg-table thead th { position: sticky; top: 0; z-index: 2; background: var(--card); font-weight: 600; white-space: nowrap; }
+.tg-table tbody th { position: sticky; left: 0; z-index: 1; background: var(--card); font-weight: 600; text-align: left; }
+.tg-table thead th:first-child { left: 0; z-index: 3; }
+.tg-table td, .tg-table tbody th { word-break: keep-all; overflow-wrap: break-word; }
+.tg-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tg-table tbody tr:nth-child(even) td, .tg-table tbody tr:nth-child(even) th { background: var(--muted); }
+.tg-table tbody tr:hover td, .tg-table tbody tr:hover th { background: var(--accent); color: var(--accent-foreground); }
+.tg-spec td { min-width: 12rem; }
+.tg-spec tbody th { min-width: 9rem; }
+.tg-codelabel { font-size: 12px; font-weight: 700; color: var(--muted-foreground); margin: 16px 0 6px; }
+.tg-code {
+  margin: 0; padding: 12px 14px; overflow: auto; background: var(--muted); border-radius: 10px; border: 1px solid var(--border);
+  font-size: 12px; line-height: 1.6; max-width: 100%;
+}
+.tg-code code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+@media (max-width: 640px) {
+  .tg-toc { top: 61px; }
+  .tg-body { gap: 40px; }
+  .tg-rules li { grid-template-columns: 2em 1fr; }
+  .tg-rules li :last-child { grid-column: 2; justify-self: start; }
+}
+.tg-hero ~ .source-note .source-links { flex-wrap: wrap; white-space: normal; }
