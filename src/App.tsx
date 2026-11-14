@@ -173,7 +173,7 @@ export default function App() {
               <span>정확한 프롬프트가 됩니다.</span>
             </h1>
             <p className="intro">
-              원자료 48개 + 확장 제안 8개, UI와 모션을 카드 안에서 직접 움직여
+              원자료 48개 + 확장 제안 9개, UI와 모션을 카드 안에서 직접 움직여
               보세요.
               <br className="desktop-break" /> 마음에 드는 동작을 담으면 나만의
               구현 프롬프트가 완성됩니다.
