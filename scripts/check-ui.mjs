@@ -134,8 +134,8 @@ const termsText = ts.transpile(fs.readFileSync("src/terms.ts", "utf8"), {
 const { terms } = await import(
   "data:text/javascript;base64," + Buffer.from(termsText).toString("base64")
 );
-assert.equal(terms.length, 56);
-assert.equal(new Set(terms.map((t) => t.id)).size, 56);
+assert.equal(terms.length, 57);
+assert.equal(new Set(terms.map((t) => t.id)).size, 57);
 const demos =
   fs.readFileSync("src/Demo.tsx", "utf8") +
   fs.readFileSync("src/TimedDemo.tsx", "utf8") + fs.readFileSync("src/ExtensionAsync.tsx", "utf8") + fs.readFileSync("src/ExtensionPatterns.tsx", "utf8");
@@ -146,7 +146,7 @@ for (const [name, ver] of Object.entries(pkg.dependencies))
   assert(/^\d/.test(ver), `pin ${name}`);
 assert(!fs.readFileSync("index.html", "utf8").includes("cdn.tailwindcss.com"));
 console.log(
-  "UI checks passed: 7 official negative fixtures covering all 6 rules, positive fixtures and demo/chrome boundary; 5 supplemental fixtures; canonical components; 56 demo cases; pinned production dependencies.",
+  "UI checks passed: 7 official negative fixtures covering all 6 rules, positive fixtures and demo/chrome boundary; 5 supplemental fixtures; canonical components; 57 demo cases; pinned production dependencies.",
 );
 
 await import("./check-timeline.mjs");
