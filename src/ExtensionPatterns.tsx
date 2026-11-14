@@ -135,12 +135,58 @@ function PaginationDemo() {
   </div>;
 }
 
+const briefingTop = [
+  { rank: 1, name: "modern-web-guidance-src", delta: "+1,875", note: "최신 웹 모범 사례를 심는 스킬 모음" },
+  { rank: 2, name: "codex-security", delta: "+754", note: "OpenAI의 취약점 탐지·수정 CLI" },
+  { rank: 3, name: "daily_stock_analysis", delta: "+272", note: "LLM 다시장 주식 분석" },
+];
+function TableReadabilityDemo() {
+  const width = useDemoOptions(57);
+  const frameStyle = {"--table-demo-width": `${width}%`} as CSSProperties;
+  const head = <thead><tr><th scope="col">순위</th><th scope="col">저장소</th><th scope="col" className="extension-num">증가</th><th scope="col">한 줄</th></tr></thead>;
+  return <div className="extension-pattern">
+    <p>같은 데이터를 네 가지로 배치합니다. 상단 옵션으로 가상 화면 너비를 좁혀 보세요.</p>
+    <div className="extension-table-frame" style={frameStyle}>
+      <table className="extension-table">
+        <caption>기준 예: 헤더·정렬·여백을 갖춘 표. 문자는 왼쪽, 숫자는 오른쪽 정렬입니다.</caption>
+        {head}
+        <tbody>{briefingTop.map(row => <tr key={row.name}><td>{row.rank}</td><td className="extension-name">{row.name}</td><td className="extension-num">{row.delta}</td><td>{row.note}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div className="extension-table-frame" style={frameStyle}>
+      <table className="extension-table extension-table-bad">
+        <caption>나쁜 예: 긴 이름이 단어 중간에서 끊어짐 (word-break: break-all)</caption>
+        {head}
+        <tbody>{briefingTop.map(row => <tr key={row.name}><td>{row.rank}</td><td className="extension-name">{row.name}</td><td className="extension-num">{row.delta}</td><td>{row.note}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div className="extension-table-frame" style={frameStyle}>
+      <table className="extension-table extension-table-cards">
+        <caption>좋은 예: 좁으면 행이 라벨 붙은 카드로 쌓임</caption>
+        {head}
+        <tbody>{briefingTop.map(row => <tr key={row.name}><td data-label="순위">{row.rank}</td><td data-label="저장소" className="extension-name">{row.name}</td><td data-label="증가" className="extension-num">{row.delta}</td><td data-label="한 줄">{row.note}</td></tr>)}</tbody>
+      </table>
+    </div>
+    <div className="extension-table-frame" style={frameStyle}>
+      <div className="extension-table-scroll" role="region" aria-label="가로 스크롤이 가능한 표" tabIndex={0}>
+        <table className="extension-table extension-table-wide">
+          <caption>좋은 예: 표 전체를 가로 스크롤로 제공</caption>
+          {head}
+          <tbody>{briefingTop.map(row => <tr key={row.name}><td>{row.rank}</td><td className="extension-name">{row.name}</td><td className="extension-num">{row.delta}</td><td>{row.note}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </div>
+    <p className="extension-ref-links">더 보기: <a href="https://www.nngroup.com/articles/mobile-tables/" target="_blank" rel="noreferrer">NN/g Mobile Tables ↗</a> · <a href="https://www.nngroup.com/articles/data-tables/" target="_blank" rel="noreferrer">NN/g Data Tables ↗</a> · <a href="https://m1.material.io/components/data-tables.html" target="_blank" rel="noreferrer">Material Design Data Tables ↗</a> · <a href="https://www.w3.org/WAI/tutorials/tables/" target="_blank" rel="noreferrer">W3C WAI Tables 튜토리얼 ↗</a></p>
+  </div>;
+}
+
 export function ExtensionPatterns({id}: {id:number}) {
   switch(id) {
     case 52: return <ComboboxDemo />;
     case 53: return <ReorderDemo />;
     case 54: return <ContainerDemo />;
     case 55: return <PaginationDemo />;
+    case 57: return <TableReadabilityDemo />;
     default: return null;
   }
 }
