@@ -226,6 +226,7 @@ export default function App() {
               >
                 2편 · 모션과 애니메이션 ↗
               </a>
+              <a href="tables.html">표 지침 전체 정리 →</a>
             </div>
           </section>
           <section className="summary">
