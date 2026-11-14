@@ -487,5 +487,6 @@ export const terms = [
   {"id": 54, "ep": 3, "cat": "extension", "ko": "컨테이너 쿼리", "en": "Container Queries", "desc": "브라우저 전체가 아니라 자신을 담은 영역의 너비에 따라 컴포넌트 배치를 바꾸는 CSS.", "prompt": "부모에 container-type:inline-size를 설정하고 @container 크기 쿼리로 좁은 카드와 넓은 카드를 전환해줘. 지원하지 않는 브라우저에서는 기본 세로 배치를 유지해줘."},
   {"id": 55, "ep": 3, "cat": "extension", "ko": "페이지네이션", "en": "Pagination", "desc": "긴 결과 목록을 페이지 단위로 나누고 현재 위치와 이동 경계를 보여주는 탐색 패턴.", "prompt": "현재 페이지에 aria-current=page를 적용하고 이전·다음 경계를 명확히 해줘. 전체 결과와 현재 범위를 알리며 페이지 크기가 바뀌면 유효한 페이지로 보정해줘."},
   {"id": 56, "ep": 3, "cat": "extension", "ko": "디바운스와 응답 경합", "en": "Debounce & Stale Responses", "desc": "연속 입력을 묶어 처리하되 늦게 도착한 예전 결과가 최신 결과를 덮지 못하게 하는 패턴.", "prompt": "검색 입력에 디바운스를 적용하고 한글 IME 조합 중에는 요청하지 마. 요청 ID나 취소로 오래된 응답을 무시하고 언마운트 시 타이머를 정리해줘."},
+  {"id": 57, "ep": 3, "cat": "extension", "ko": "데이터 표 읽기 규칙", "en": "Readable Data Tables", "desc": "AI가 기본값으로 놓치기 쉬운 데이터 표 규칙. 긴 이름을 단어 중간에서 끊지 않고, 좁으면 카드로 쌓거나 가로 스크롤을 제공하고, 넓으면 헤더·정렬·여백을 갖추는 기준.", "prompt": "데이터 표를 만들 때 이 규칙을 지켜줘. 긴 텍스트는 단어 중간이 아니라 공백·하이픈에서만 줄바꿈하고, 좁은 화면에서는 각 행을 라벨 붙은 카드로 쌓거나 가로 스크롤 영역으로 제공해줘. 열 헤더는 th scope=col, 표 주제는 caption으로 표시하고 문자는 왼쪽·숫자는 오른쪽으로 정렬하고 행 구분선과 여백을 줘. table 의미 구조를 유지해서 스크린리더가 읽을 수 있게 해줘."},
 ] as const;
 export type Term = (typeof terms)[number];
